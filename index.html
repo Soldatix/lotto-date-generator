@@ -64,6 +64,21 @@ button,input,select{font:inherit}.app{max-width:1200px;margin:auto;padding:28px 
 h1{font-size:clamp(1.45rem,3vw,2.25rem);margin:0}.subtitle{color:var(--muted);font-size:.94rem;margin-top:3px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}.iconbtn,.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:13px;padding:10px 13px;cursor:pointer;transition:.18s;box-shadow:0 4px 12px rgba(0,0,0,.05)}.iconbtn:hover,.btn:hover{transform:translateY(-1px);border-color:var(--blue)}
 .grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr);gap:20px}.card{background:color-mix(in srgb,var(--panel) 95%,transparent);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}.card h2{font-size:1.08rem;margin:0 0 16px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:700;color:var(--muted)}input,select{width:100%;border:1px solid var(--line);background:var(--input);color:var(--text);padding:12px 13px;border-radius:12px;outline:none}input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(36,119,255,.13)}.presetrow{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--input);color:var(--text);padding:8px 11px;border-radius:999px;cursor:pointer;font-weight:750}.chip.active{background:linear-gradient(135deg,var(--blue),var(--purple2));color:white;border-color:transparent}.sectionline{border:0;border-top:1px solid var(--line);margin:18px 0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.primary{border:0;background:linear-gradient(135deg,var(--blue),var(--purple2) 58%,var(--red));color:white;font-weight:850;padding:13px 18px}.secondary{font-weight:750}.hint{font-size:.8rem;color:var(--muted);margin-top:9px;line-height:1.5}.resultBox{min-height:360px;display:flex;flex-direction:column}.empty{margin:auto;text-align:center;color:var(--muted)}.empty .big{font-size:3rem}.drawMeta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.84rem;margin-bottom:18px}.balls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}.ball{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:1.12rem;color:white;background:linear-gradient(145deg,#3690ff,#1653d9);box-shadow:inset 0 2px 8px rgba(255,255,255,.28),0 8px 18px rgba(36,119,255,.22)}.ball.extra{background:linear-gradient(145deg,#ffd84b,#e6a700);color:#3c2b00}.plus{font-size:1.5rem;font-weight:900;color:var(--red);padding:0 2px}.resultText{border:1px dashed var(--line);background:var(--input);border-radius:15px;padding:13px;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92rem}.history{margin-top:20px}.historyList{display:flex;flex-direction:column;gap:8px;max-height:240px;overflow:auto}.histItem{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:var(--input);padding:10px 11px;border-radius:12px}.histText{font-size:.84rem;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini{padding:7px 9px;font-size:.78rem}.footer{color:var(--muted);text-align:center;font-size:.76rem;margin-top:18px}.warning{border-left:4px solid var(--yellow);background:color-mix(in srgb,var(--yellow) 10%,var(--panel));padding:10px 12px;border-radius:10px;font-size:.8rem;color:var(--muted);margin-top:16px}
 @media(max-width:850px){.grid{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.toolbar{justify-content:flex-start}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.resultBox{min-height:300px}}
+
+/* Information / Donations modal */
+.info-overlay{position:fixed;inset:0;background:rgba(3,7,18,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+.info-overlay.open{display:flex}
+.info-modal{width:min(760px,100%);max-height:min(86vh,820px);display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:0 28px 90px rgba(0,0,0,.5);overflow:hidden}
+.info-head,.info-foot{flex:0 0 auto;padding:18px 22px;background:color-mix(in srgb,var(--panel) 96%,transparent)}
+.info-head{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line)}
+.info-heart{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;border:1px solid rgba(239,62,91,.45);background:rgba(239,62,91,.08);color:#ff5f8a}
+.info-title{font-size:1.28rem;font-weight:850;margin:0}.info-sub{color:var(--muted);font-size:.9rem;margin-top:2px}
+.info-x{margin-left:auto;border:0;background:transparent;color:var(--muted);font-size:1.7rem;cursor:pointer;padding:6px 8px}.info-x:hover{color:var(--text)}
+.info-body{overflow:auto;padding:24px 22px}.info-box{border:1px solid var(--line);background:color-mix(in srgb,var(--input) 65%,var(--panel));border-radius:16px;padding:18px;margin-bottom:22px}.info-kicker{font-size:.82rem;font-weight:850;letter-spacing:.04em;text-transform:uppercase;color:#1fdba5;margin-bottom:12px}.info-box p{margin:0 0 10px;line-height:1.6}.info-box p:last-child{margin-bottom:0}
+.info-section-title{font-size:.82rem;font-weight:850;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:26px}.pay-card{display:flex;flex-direction:column;gap:4px;text-decoration:none;padding:16px;border-radius:15px;border:1px solid var(--line);background:var(--input);color:var(--text);font-weight:800}.pay-card small{font-weight:700;color:#4da3ff}.pay-card.stripe small{color:#8e82ff}.pay-card:hover{border-color:var(--blue);transform:translateY(-1px)}
+.wallet-list{display:flex;flex-direction:column;gap:10px}.wallet-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;border:1px solid var(--line);background:var(--input);padding:12px 13px;border-radius:14px}.coin{font-size:.78rem;font-weight:900;padding:6px 8px;border-radius:6px;background:color-mix(in srgb,var(--purple2) 24%,var(--panel));border:1px solid color-mix(in srgb,var(--purple2) 55%,var(--line));white-space:nowrap}.wallet-main{min-width:0}.wallet-name{font-size:.82rem;color:var(--muted);margin-bottom:4px}.wallet-address{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.79rem;word-break:break-all;color:var(--text)}
+.copy-wallet{white-space:nowrap}.info-foot{border-top:1px solid var(--line);display:flex;justify-content:flex-end}.info-close{font-weight:800}.info-note{font-size:.75rem;color:var(--muted);margin-top:14px;line-height:1.5}
+@media(max-width:650px){.pay-grid{grid-template-columns:1fr}.wallet-row{grid-template-columns:auto minmax(0,1fr)}.copy-wallet{grid-column:1/-1;width:100%}.info-modal{max-height:92vh}.info-body{padding:18px 14px}.info-head,.info-foot{padding:14px}}
 </style>
 </head>
 <body>
@@ -72,6 +87,7 @@ h1{font-size:clamp(1.45rem,3vw,2.25rem);margin:0}.subtitle{color:var(--muted);fo
     <div class="brand"><div class="logo">L</div><div><h1 data-i18n="title">Date Lotto Generator</h1><div class="subtitle" data-i18n="subtitle">Generate repeatable lotto combinations from any date.</div></div></div>
     <div class="toolbar">
       <select id="language" aria-label="Language"><option value="en">English</option><option value="hr">Hrvatski</option><option value="it">Italiano</option><option value="de">Deutsch</option><option value="es">Español</option></select>
+      <button class="iconbtn" id="infoBtn" title="Information / Donations" aria-label="Information / Donations">ⓘ</button>
       <button class="iconbtn" id="themeBtn" title="Theme">☀︎ / ◐</button>
       <button class="iconbtn" id="fullscreenBtn" title="Fullscreen">⛶</button>
     </div>
@@ -102,6 +118,52 @@ h1{font-size:clamp(1.45rem,3vw,2.25rem);margin:0}.subtitle{color:var(--muted);fo
   </div>
   <div class="footer">Date Lotto Generator • Standalone HTML • Local settings & history</div>
 </div>
+
+
+<div class="info-overlay" id="infoOverlay" aria-hidden="true">
+  <section class="info-modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+    <header class="info-head">
+      <div class="info-heart">♡</div>
+      <div>
+        <h2 class="info-title" id="infoTitle" data-info-i18n="title">Information / Donations</h2>
+        <div class="info-sub" data-info-i18n="subtitle">Support charity & open-source software</div>
+      </div>
+      <button class="info-x" id="infoX" aria-label="Close">×</button>
+    </header>
+    <div class="info-body">
+      <div class="info-box">
+        <div class="info-kicker" data-info-i18n="charity">Charity purpose</div>
+        <p data-info-i18n="p1">The application is free to use, but donations are welcome.</p>
+        <p data-info-i18n="p2">A part of the received donations will be forwarded to various charitable organizations, the largest part will be donated to institutions caring for children without adequate parental care.</p>
+      </div>
+
+      <div class="info-section-title" data-info-i18n="direct">Direct online payments</div>
+      <div class="pay-grid">
+        <a class="pay-card" href="https://www.paypal.com/ncp/payment/RU2CWCNVQ7XD6" target="_blank" rel="noopener noreferrer">
+          <small>PayPal Account</small><span data-info-i18n="paypal">Donate via PayPal</span>
+        </a>
+        <a class="pay-card stripe" href="https://buy.stripe.com/7sYeVd7Blfe89cm0k02kw00" target="_blank" rel="noopener noreferrer">
+          <small>Card Payment</small><span data-info-i18n="stripe">Donate via Stripe</span>
+        </a>
+      </div>
+
+      <div class="info-section-title" data-info-i18n="crypto">Crypto wallets</div>
+      <div class="wallet-list">
+        <div class="wallet-row"><span class="coin">BTC</span><div class="wallet-main"><div class="wallet-name">Bitcoin</div><div class="wallet-address">bc1qwlrxrh64peukga0fp59m9yg7gpf0yj8q7fxnsc</div></div><button class="btn mini copy-wallet" data-wallet="bc1qwlrxrh64peukga0fp59m9yg7gpf0yj8q7fxnsc">Copy</button></div>
+        <div class="wallet-row"><span class="coin">ETH</span><div class="wallet-main"><div class="wallet-name">Ethereum</div><div class="wallet-address">0xA99A52085c6725854daa46bb302041569c8bA4E3</div></div><button class="btn mini copy-wallet" data-wallet="0xA99A52085c6725854daa46bb302041569c8bA4E3">Copy</button></div>
+        <div class="wallet-row"><span class="coin">XRP</span><div class="wallet-main"><div class="wallet-name">Ripple</div><div class="wallet-address">rP43SsrkhPkxTsFohMAm32sAQg7vqwmDpr</div></div><button class="btn mini copy-wallet" data-wallet="rP43SsrkhPkxTsFohMAm32sAQg7vqwmDpr">Copy</button></div>
+        <div class="wallet-row"><span class="coin">SOL</span><div class="wallet-main"><div class="wallet-name">Solana</div><div class="wallet-address">8xkdVTEaDGuWu4aE3HpEx8r9Aux98JZbdsMiDQvJWBWR</div></div><button class="btn mini copy-wallet" data-wallet="8xkdVTEaDGuWu4aE3HpEx8r9Aux98JZbdsMiDQvJWBWR">Copy</button></div>
+        <div class="wallet-row"><span class="coin">DOGE</span><div class="wallet-main"><div class="wallet-name">Dogecoin</div><div class="wallet-address">DGAT32ku8WmFaTDxCgVuRuVpUFmfdmD5Jb</div></div><button class="btn mini copy-wallet" data-wallet="DGAT32ku8WmFaTDxCgVuRuVpUFmfdmD5Jb">Copy</button></div>
+        <div class="wallet-row"><span class="coin">XLM</span><div class="wallet-main"><div class="wallet-name">Stellar Lumens</div><div class="wallet-address">GCYH4OD4I2GNRKFFOYROE3N3S2HCT5RXIML3TZV5DP3TLTLXPXQXIJZ3</div></div><button class="btn mini copy-wallet" data-wallet="GCYH4OD4I2GNRKFFOYROE3N3S2HCT5RXIML3TZV5DP3TLTLXPXQXIJZ3">Copy</button></div>
+        <div class="wallet-row"><span class="coin">LTC</span><div class="wallet-main"><div class="wallet-name">Litecoin</div><div class="wallet-address">LWtaFniqdYpv2xJtqo9WqDwCsQ2cW6PYWi</div></div><button class="btn mini copy-wallet" data-wallet="LWtaFniqdYpv2xJtqo9WqDwCsQ2cW6PYWi">Copy</button></div>
+        <div class="wallet-row"><span class="coin">RVN</span><div class="wallet-main"><div class="wallet-name">Ravencoin</div><div class="wallet-address">RAtXzKZyB3awfq2u2cK8YppC9kJamU5tPQ</div></div><button class="btn mini copy-wallet" data-wallet="RAtXzKZyB3awfq2u2cK8YppC9kJamU5tPQ">Copy</button></div>
+      </div>
+      <div class="info-note" data-info-i18n="note">Please verify the wallet address before sending a transaction. Crypto transfers cannot be reversed.</div>
+    </div>
+    <footer class="info-foot"><button class="btn info-close" id="infoClose" data-info-i18n="close">Close</button></footer>
+  </section>
+</div>
+
 <script>
 const presets=[
  {id:'6',label:'6',m:6,e:0,mm:49,em:12},
@@ -119,6 +181,20 @@ it:{title:'Generatore Lotto dalla Data',subtitle:'Genera combinazioni Lotto ripe
 de:{title:'Datums-Lotto-Generator',subtitle:'Erzeuge reproduzierbare Lotto-Kombinationen aus einem beliebigen Datum.',setup:'Generator-Einstellungen',date:'Datum',format:'Lotto-Format',mainCount:'Anzahl Hauptzahlen',mainMax:'Bereich Hauptzahlen (1–N)',extraCount:'Anzahl Zusatzzahlen',extraMax:'Bereich Zusatzzahlen (1–N)',salt:'Optionaler persönlicher Schlüssel',generate:'Zahlen generieren',reset:'Zurücksetzen',hint:'Dasselbe Datum + Einstellungen + persönlicher Schlüssel erzeugt immer dieselbe Kombination.',warning:'Nur zur Unterhaltung. Lottoziehungen sind zufällig; dieser Generator kann die mathematische Gewinnchance nicht erhöhen.',result:'Generierte Kombination',empty:'Datum wählen und Kombination generieren.',copy:'Kopieren',save:'Speichern',saved:'Gespeichert',history:'Gespeicherte Kombinationen',delete:'Löschen',invalid:'Bitte Zahlenbereiche und Anzahl prüfen.',invalidDate:'Bitte ein gültiges Datum im Format dd/mm/yyyy eingeben.',copied:'Kopiert!',custom:'Benutzerdefiniert'},
 es:{title:'Generador de Lotería por Fecha',subtitle:'Genera combinaciones repetibles a partir de cualquier fecha.',setup:'Configuración del generador',date:'Fecha',format:'Formato de lotería',mainCount:'Cantidad de números principales',mainMax:'Rango principal (1–N)',extraCount:'Cantidad de números extra',extraMax:'Rango extra (1–N)',salt:'Clave personal opcional',generate:'Generar números',reset:'Restablecer',hint:'La misma fecha + configuración + clave personal siempre produce la misma combinación.',warning:'Solo para entretenimiento. Los sorteos son aleatorios; este generador no aumenta las probabilidades matemáticas de ganar.',result:'Combinación generada',empty:'Elige una fecha y genera tu combinación.',copy:'Copiar',save:'Guardar',saved:'Guardado',history:'Combinaciones guardadas',delete:'Eliminar',invalid:'Comprueba los rangos y cantidades de números.',invalidDate:'Introduce una fecha válida en formato dd/mm/yyyy.',copied:'¡Copiado!',custom:'Personalizado'}
 };
+
+const INFO_T={
+ en:{title:'Information / Donations',subtitle:'Support charity & open-source software',charity:'Charity purpose',p1:'The application is free to use, but donations are welcome.',p2:'A part of the received donations will be forwarded to various charitable organizations, the largest part will be donated to institutions caring for children without adequate parental care.',direct:'Direct online payments',paypal:'Donate via PayPal',stripe:'Donate via Stripe',crypto:'Crypto wallets',copy:'Copy',copied:'Copied!',close:'Close',note:'Please verify the wallet address before sending a transaction. Crypto transfers cannot be reversed.'},
+ hr:{title:'Informacije / Donacije',subtitle:'Podržite humanitarne svrhe i besplatni softver',charity:'Humanitarna svrha',p1:'Aplikacija je besplatna za korištenje, ali donacije su dobrodošle.',p2:'Dio primljenih donacija bit će proslijeđen raznim humanitarnim organizacijama, a najveći dio bit će doniran ustanovama koje skrbe o djeci bez adekvatne roditeljske skrbi.',direct:'Izravna online plaćanja',paypal:'Doniraj putem PayPala',stripe:'Doniraj karticom putem Stripea',crypto:'Kripto novčanici',copy:'Kopiraj',copied:'Kopirano!',close:'Zatvori',note:'Prije slanja transakcije provjerite adresu novčanika. Kripto transakcije nije moguće poništiti.'},
+ it:{title:'Informazioni / Donazioni',subtitle:'Sostieni la beneficenza e il software gratuito',charity:'Scopo benefico',p1:'L’applicazione è gratuita, ma le donazioni sono benvenute.',p2:'Una parte delle donazioni ricevute sarà devoluta a varie organizzazioni benefiche; la parte maggiore sarà donata a istituzioni che si occupano di bambini privi di adeguate cure parentali.',direct:'Pagamenti online diretti',paypal:'Dona con PayPal',stripe:'Dona con Stripe',crypto:'Portafogli crypto',copy:'Copia',copied:'Copiato!',close:'Chiudi',note:'Verifica l’indirizzo del portafoglio prima di inviare una transazione. I trasferimenti crypto non possono essere annullati.'},
+ de:{title:'Informationen / Spenden',subtitle:'Unterstütze wohltätige Zwecke und kostenlose Software',charity:'Wohltätiger Zweck',p1:'Die Anwendung ist kostenlos nutzbar, Spenden sind jedoch willkommen.',p2:'Ein Teil der erhaltenen Spenden wird an verschiedene gemeinnützige Organisationen weitergeleitet; der größte Teil wird an Einrichtungen gespendet, die Kinder ohne angemessene elterliche Betreuung unterstützen.',direct:'Direkte Online-Zahlungen',paypal:'Über PayPal spenden',stripe:'Über Stripe spenden',crypto:'Krypto-Wallets',copy:'Kopieren',copied:'Kopiert!',close:'Schließen',note:'Bitte prüfe die Wallet-Adresse vor dem Senden. Krypto-Transaktionen können nicht rückgängig gemacht werden.'},
+ es:{title:'Información / Donaciones',subtitle:'Apoya causas benéficas y software gratuito',charity:'Finalidad benéfica',p1:'La aplicación es gratuita, pero las donaciones son bienvenidas.',p2:'Una parte de las donaciones recibidas se destinará a diversas organizaciones benéficas; la mayor parte se donará a instituciones que atienden a niños sin una atención parental adecuada.',direct:'Pagos online directos',paypal:'Donar con PayPal',stripe:'Donar con Stripe',crypto:'Monederos cripto',copy:'Copiar',copied:'¡Copiado!',close:'Cerrar',note:'Verifica la dirección del monedero antes de enviar una transacción. Las transferencias cripto no se pueden revertir.'}
+};
+function infoTr(k){const lang=$('language')?.value||'en';return (INFO_T[lang]||INFO_T.en)[k]||INFO_T.en[k]||k}
+function applyInfoLanguage(){document.querySelectorAll('[data-info-i18n]').forEach(el=>el.textContent=infoTr(el.dataset.infoI18n));document.querySelectorAll('.copy-wallet').forEach(b=>{if(!b.dataset.copied)b.textContent=infoTr('copy')})}
+function openInfo(){const o=$('infoOverlay');o.classList.add('open');o.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';applyInfoLanguage()}
+function closeInfo(){const o=$('infoOverlay');o.classList.remove('open');o.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+async function copyWallet(button){const value=button.dataset.wallet;try{await navigator.clipboard.writeText(value)}catch{const ta=document.createElement('textarea');ta.value=value;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}button.dataset.copied='1';button.textContent=infoTr('copied');setTimeout(()=>{delete button.dataset.copied;button.textContent=infoTr('copy')},1200)}
+
 const $=id=>document.getElementById(id); let currentPreset='6'; let lastResult=null;
 function tr(k){return (T[$('language').value]||T.en)[k]||T.en[k]||k}
 function renderPresets(){ const wrap=$('presets'); wrap.innerHTML=''; presets.forEach(p=>{const b=document.createElement('button');b.className='chip'+(p.id===currentPreset?' active':'');b.textContent=p.id==='custom'?tr('custom'):p.label;b.onclick=()=>selectPreset(p.id);wrap.appendChild(b)}) }
@@ -137,8 +213,10 @@ async function copyResult(){if(!lastResult)return;const txt=resultString(lastRes
 function getHistory(){try{return JSON.parse(localStorage.getItem('lottoHistory')||'[]')}catch{return[]}}
 function saveResult(){if(!lastResult)return;let h=getHistory();h.unshift(lastResult);h=h.slice(0,30);localStorage.setItem('lottoHistory',JSON.stringify(h));$('saveBtn').textContent=tr('saved');renderHistory()}
 function renderHistory(){const h=getHistory();$('historyWrap').hidden=!h.length;const w=$('historyList');w.innerHTML='';h.forEach((r,i)=>{const row=document.createElement('div');row.className='histItem';row.innerHTML=`<div class="histText" title="${resultString(r)}">${resultString(r)}</div><div><button class="btn mini" data-copy="${i}">${tr('copy')}</button> <button class="btn mini" data-del="${i}">${tr('delete')}</button></div>`;w.appendChild(row)});w.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{const r=h[+b.dataset.copy];try{await navigator.clipboard.writeText(resultString(r))}catch{} b.textContent=tr('copied');setTimeout(()=>b.textContent=tr('copy'),900)});w.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{h.splice(+b.dataset.del,1);localStorage.setItem('lottoHistory',JSON.stringify(h));renderHistory()})}
-function applyLanguage(){document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));renderPresets();if(lastResult)renderResult();renderHistory();localStorage.setItem('lottoLang',$('language').value)}
+function applyLanguage(){document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));renderPresets();if(lastResult)renderResult();renderHistory();applyInfoLanguage();localStorage.setItem('lottoLang',$('language').value)}
 function reset(){selectPreset('6');$('salt').value='';$('dateInput').value='';lastResult=null;$('resultArea').className='empty';$('resultArea').innerHTML=`<div class="big">🎱</div><p>${tr('empty')}</p>`}
+
+$('infoBtn').onclick=openInfo;$('infoX').onclick=closeInfo;$('infoClose').onclick=closeInfo;$('infoOverlay').addEventListener('click',e=>{if(e.target===$('infoOverlay'))closeInfo()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('infoOverlay').classList.contains('open'))closeInfo()});document.querySelectorAll('.copy-wallet').forEach(b=>b.onclick=()=>copyWallet(b));
 $('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeBtn').onclick=()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;localStorage.setItem('lottoTheme',next)};$('fullscreenBtn').onclick=async()=>{if(!document.fullscreenElement)await document.documentElement.requestFullscreen?.();else await document.exitFullscreen?.()};
 ['mainCount','mainMax','extraCount','extraMax'].forEach(id=>$(id).addEventListener('input',()=>{currentPreset='custom';renderPresets()}));
 $('dateInput').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);e.target.value=v});
