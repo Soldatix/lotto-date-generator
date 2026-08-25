@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Date Lotto Generator</title>
+<style>
+:root{
+  --bg:#f6f8ff;--panel:#ffffff;--text:#16152b;--muted:#6c6b84;--line:#e3e6f3;
+  --blue:#2477ff;--yellow:#ffd43b;--purple:#3a185f;--purple2:#6f35b5;--red:#ef3e5b;
+  --shadow:0 18px 50px rgba(42,34,92,.14);--input:#f8f9fe;
+}
+html[data-theme="dark"]{
+  --bg:#0d0b18;--panel:#171329;--text:#f7f5ff;--muted:#aaa4c4;--line:#312949;
+  --input:#211a37;--shadow:0 22px 70px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:
+radial-gradient(circle at 10% 0%,rgba(36,119,255,.18),transparent 32%),
+radial-gradient(circle at 90% 10%,rgba(239,62,91,.14),transparent 30%),
+linear-gradient(145deg,var(--bg),color-mix(in srgb,var(--bg) 85%,#321c5c 15%));color:var(--text);min-height:100vh}
+button,input,select{font:inherit}.app{max-width:1200px;margin:auto;padding:28px 18px 48px}.topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:22px}.brand{display:flex;gap:14px;align-items:center}.logo{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--blue),var(--purple2) 50%,var(--red));box-shadow:0 10px 30px rgba(57,49,173,.35)}
+h1{font-size:clamp(1.45rem,3vw,2.25rem);margin:0}.subtitle{color:var(--muted);font-size:.94rem;margin-top:3px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}.iconbtn,.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:13px;padding:10px 13px;cursor:pointer;transition:.18s;box-shadow:0 4px 12px rgba(0,0,0,.05)}.iconbtn:hover,.btn:hover{transform:translateY(-1px);border-color:var(--blue)}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr);gap:20px}.card{background:color-mix(in srgb,var(--panel) 95%,transparent);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}.card h2{font-size:1.08rem;margin:0 0 16px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:700;color:var(--muted)}input,select{width:100%;border:1px solid var(--line);background:var(--input);color:var(--text);padding:12px 13px;border-radius:12px;outline:none}input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(36,119,255,.13)}.presetrow{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--input);color:var(--text);padding:8px 11px;border-radius:999px;cursor:pointer;font-weight:750}.chip.active{background:linear-gradient(135deg,var(--blue),var(--purple2));color:white;border-color:transparent}.sectionline{border:0;border-top:1px solid var(--line);margin:18px 0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.primary{border:0;background:linear-gradient(135deg,var(--blue),var(--purple2) 58%,var(--red));color:white;font-weight:850;padding:13px 18px}.secondary{font-weight:750}.hint{font-size:.8rem;color:var(--muted);margin-top:9px;line-height:1.5}.resultBox{min-height:360px;display:flex;flex-direction:column}.empty{margin:auto;text-align:center;color:var(--muted)}.empty .big{font-size:3rem}.drawMeta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.84rem;margin-bottom:18px}.balls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}.ball{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:1.12rem;color:white;background:linear-gradient(145deg,#3690ff,#1653d9);box-shadow:inset 0 2px 8px rgba(255,255,255,.28),0 8px 18px rgba(36,119,255,.22)}.ball.extra{background:linear-gradient(145deg,#ffd84b,#e6a700);color:#3c2b00}.plus{font-size:1.5rem;font-weight:900;color:var(--red);padding:0 2px}.resultText{border:1px dashed var(--line);background:var(--input);border-radius:15px;padding:13px;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92rem}.history{margin-top:20px}.historyList{display:flex;flex-direction:column;gap:8px;max-height:240px;overflow:auto}.histItem{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:var(--input);padding:10px 11px;border-radius:12px}.histText{font-size:.84rem;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini{padding:7px 9px;font-size:.78rem}.footer{color:var(--muted);text-align:center;font-size:.76rem;margin-top:18px}.warning{border-left:4px solid var(--yellow);background:color-mix(in srgb,var(--yellow) 10%,var(--panel));padding:10px 12px;border-radius:10px;font-size:.8rem;color:var(--muted);margin-top:16px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.toolbar{justify-content:flex-start}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.resultBox{min-height:300px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="logo">L</div><div><h1 data-i18n="title">Date Lotto Generator</h1><div class="subtitle" data-i18n="subtitle">Generate repeatable lotto combinations from any date.</div></div></div>
+    <div class="toolbar">
+      <select id="language" aria-label="Language"><option value="en">English</option><option value="hr">Hrvatski</option><option value="it">Italiano</option><option value="de">Deutsch</option><option value="es">Español</option></select>
+      <button class="iconbtn" id="themeBtn" title="Theme">☀︎ / ◐</button>
+      <button class="iconbtn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2 data-i18n="setup">Generator setup</h2>
+      <div class="formgrid">
+        <div class="field full"><label data-i18n="date">Date</label><input type="text" id="dateInput" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" autocomplete="off" aria-label="Date in dd/mm/yyyy format"></div>
+        <div class="field full"><label data-i18n="format">Lotto format</label><div class="presetrow" id="presets"></div></div>
+        <div class="field"><label data-i18n="mainCount">Main numbers count</label><input id="mainCount" type="number" min="1" max="20" value="6"></div>
+        <div class="field"><label data-i18n="mainMax">Main number range (1–N)</label><input id="mainMax" type="number" min="2" max="99" value="49"></div>
+        <div class="field"><label data-i18n="extraCount">Extra numbers count</label><input id="extraCount" type="number" min="0" max="10" value="0"></div>
+        <div class="field"><label data-i18n="extraMax">Extra number range (1–N)</label><input id="extraMax" type="number" min="1" max="99" value="12"></div>
+        <div class="field full"><label data-i18n="salt">Optional personal key</label><input id="salt" type="text" maxlength="40" placeholder="e.g. name, city, lucky word"></div>
+      </div>
+      <div class="actions"><button class="btn primary" id="generateBtn" data-i18n="generate">Generate numbers</button><button class="btn secondary" id="resetBtn" data-i18n="reset">Reset</button></div>
+      <div class="hint" data-i18n="hint">The same date + settings + personal key always produces the same combination.</div>
+      <div class="warning" data-i18n="warning">For entertainment only. Lottery draws are random; this generator cannot improve the mathematical odds of winning.</div>
+    </section>
+
+    <section class="card resultBox">
+      <h2 data-i18n="result">Generated combination</h2>
+      <div id="resultArea" class="empty"><div class="big">🎱</div><p data-i18n="empty">Choose a date and generate your combination.</p></div>
+      <div class="history" id="historyWrap" hidden><h2 data-i18n="history">Saved combinations</h2><div class="historyList" id="historyList"></div></div>
+    </section>
+  </div>
+  <div class="footer">Date Lotto Generator • Standalone HTML • Local settings & history</div>
+</div>
+<script>
+const presets=[
+ {id:'6',label:'6',m:6,e:0,mm:49,em:12},
+ {id:'6+1',label:'6+1',m:6,e:1,mm:49,em:10},
+ {id:'7',label:'7',m:7,e:0,mm:39,em:12},
+ {id:'5+2',label:'5+2',m:5,e:2,mm:50,em:12},
+ {id:'5+1',label:'5+1',m:5,e:1,mm:50,em:12},
+ {id:'6+2',label:'6+2',m:6,e:2,mm:49,em:12},
+ {id:'custom',label:'Custom',m:6,e:0,mm:49,em:12}
+];
+const T={
+en:{title:'Date Lotto Generator',subtitle:'Generate repeatable lotto combinations from any date.',setup:'Generator setup',date:'Date',format:'Lotto format',mainCount:'Main numbers count',mainMax:'Main number range (1–N)',extraCount:'Extra numbers count',extraMax:'Extra number range (1–N)',salt:'Optional personal key',generate:'Generate numbers',reset:'Reset',hint:'The same date + settings + personal key always produces the same combination.',warning:'For entertainment only. Lottery draws are random; this generator cannot improve the mathematical odds of winning.',result:'Generated combination',empty:'Choose a date and generate your combination.',copy:'Copy',save:'Save',saved:'Saved',history:'Saved combinations',delete:'Delete',invalid:'Check the selected ranges and number counts.',invalidDate:'Enter a valid date in dd/mm/yyyy format.',copied:'Copied!',custom:'Custom'},
+hr:{title:'Generator loto brojeva po datumu',subtitle:'Generiraj ponovljivu loto kombinaciju na osnovu bilo kojeg datuma.',setup:'Postavke generatora',date:'Datum',format:'Vrsta Lota',mainCount:'Broj glavnih brojeva',mainMax:'Raspon glavnih brojeva (1–N)',extraCount:'Broj dodatnih brojeva',extraMax:'Raspon dodatnih brojeva (1–N)',salt:'Opcionalni osobni ključ',generate:'Generiraj brojeve',reset:'Resetiraj',hint:'Isti datum + postavke + osobni ključ uvijek daju istu kombinaciju.',warning:'Samo za zabavu. Loto izvlačenja su nasumična; ovaj generator ne može povećati matematičku vjerojatnost dobitka.',result:'Generirana kombinacija',empty:'Odaberi datum i generiraj kombinaciju.',copy:'Kopiraj',save:'Spremi',saved:'Spremljeno',history:'Spremljene kombinacije',delete:'Obriši',invalid:'Provjeri raspon i broj odabranih brojeva.',invalidDate:'Unesi ispravan datum u formatu dd/mm/yyyy.',copied:'Kopirano!',custom:'Prilagođeno'},
+it:{title:'Generatore Lotto dalla Data',subtitle:'Genera combinazioni Lotto ripetibili da qualsiasi data.',setup:'Impostazioni generatore',date:'Data',format:'Formato Lotto',mainCount:'Quantità numeri principali',mainMax:'Intervallo numeri principali (1–N)',extraCount:'Quantità numeri extra',extraMax:'Intervallo numeri extra (1–N)',salt:'Chiave personale opzionale',generate:'Genera numeri',reset:'Ripristina',hint:'La stessa data + impostazioni + chiave personale produce sempre la stessa combinazione.',warning:'Solo per intrattenimento. Le estrazioni sono casuali e questo generatore non aumenta le probabilità matematiche di vincita.',result:'Combinazione generata',empty:'Scegli una data e genera la combinazione.',copy:'Copia',save:'Salva',saved:'Salvato',history:'Combinazioni salvate',delete:'Elimina',invalid:'Controlla intervalli e quantità dei numeri.',invalidDate:'Inserisci una data valida nel formato dd/mm/yyyy.',copied:'Copiato!',custom:'Personalizzato'},
+de:{title:'Datums-Lotto-Generator',subtitle:'Erzeuge reproduzierbare Lotto-Kombinationen aus einem beliebigen Datum.',setup:'Generator-Einstellungen',date:'Datum',format:'Lotto-Format',mainCount:'Anzahl Hauptzahlen',mainMax:'Bereich Hauptzahlen (1–N)',extraCount:'Anzahl Zusatzzahlen',extraMax:'Bereich Zusatzzahlen (1–N)',salt:'Optionaler persönlicher Schlüssel',generate:'Zahlen generieren',reset:'Zurücksetzen',hint:'Dasselbe Datum + Einstellungen + persönlicher Schlüssel erzeugt immer dieselbe Kombination.',warning:'Nur zur Unterhaltung. Lottoziehungen sind zufällig; dieser Generator kann die mathematische Gewinnchance nicht erhöhen.',result:'Generierte Kombination',empty:'Datum wählen und Kombination generieren.',copy:'Kopieren',save:'Speichern',saved:'Gespeichert',history:'Gespeicherte Kombinationen',delete:'Löschen',invalid:'Bitte Zahlenbereiche und Anzahl prüfen.',invalidDate:'Bitte ein gültiges Datum im Format dd/mm/yyyy eingeben.',copied:'Kopiert!',custom:'Benutzerdefiniert'},
+es:{title:'Generador de Lotería por Fecha',subtitle:'Genera combinaciones repetibles a partir de cualquier fecha.',setup:'Configuración del generador',date:'Fecha',format:'Formato de lotería',mainCount:'Cantidad de números principales',mainMax:'Rango principal (1–N)',extraCount:'Cantidad de números extra',extraMax:'Rango extra (1–N)',salt:'Clave personal opcional',generate:'Generar números',reset:'Restablecer',hint:'La misma fecha + configuración + clave personal siempre produce la misma combinación.',warning:'Solo para entretenimiento. Los sorteos son aleatorios; este generador no aumenta las probabilidades matemáticas de ganar.',result:'Combinación generada',empty:'Elige una fecha y genera tu combinación.',copy:'Copiar',save:'Guardar',saved:'Guardado',history:'Combinaciones guardadas',delete:'Eliminar',invalid:'Comprueba los rangos y cantidades de números.',invalidDate:'Introduce una fecha válida en formato dd/mm/yyyy.',copied:'¡Copiado!',custom:'Personalizado'}
+};
+const $=id=>document.getElementById(id); let currentPreset='6'; let lastResult=null;
+function tr(k){return (T[$('language').value]||T.en)[k]||T.en[k]||k}
+function renderPresets(){ const wrap=$('presets'); wrap.innerHTML=''; presets.forEach(p=>{const b=document.createElement('button');b.className='chip'+(p.id===currentPreset?' active':'');b.textContent=p.id==='custom'?tr('custom'):p.label;b.onclick=()=>selectPreset(p.id);wrap.appendChild(b)}) }
+function selectPreset(id){currentPreset=id; const p=presets.find(x=>x.id===id); if(id!=='custom'){ $('mainCount').value=p.m;$('extraCount').value=p.e;$('mainMax').value=p.mm;$('extraMax').value=p.em } renderPresets()}
+function hash32(str){let h=2166136261>>>0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function uniqueNums(count,max,rng){const arr=Array.from({length:max},(_,i)=>i+1);for(let i=arr.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr.slice(0,count).sort((a,b)=>a-b)}
+function validate(){const m=+$('mainCount').value,mm=+$('mainMax').value,e=+$('extraCount').value,em=+$('extraMax').value;return m>0&&mm>=m&&e>=0&&(e===0||em>=e)&&mm<=99&&em<=99}
+function todayDMY(){const d=new Date();return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`}
+function parseDMY(value){const m=value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(!m)return null;const day=+m[1],month=+m[2],year=+m[3];if(year<1000||year>9999)return null;const d=new Date(year,month-1,day);if(d.getFullYear()!==year||d.getMonth()!==month-1||d.getDate()!==day)return null;return {display:`${m[1]}/${m[2]}/${m[3]}`,iso:`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`}}
+function displayDate(value){if(/^\d{2}\/\d{2}\/\d{4}$/.test(value||''))return value;const m=(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}/${m[2]}/${m[1]}`:(value||'')}
+function generate(){if(!validate()){alert(tr('invalid'));return} let entered=$('dateInput').value.trim();if(!entered){entered=todayDMY();$('dateInput').value=entered}const parsed=parseDMY(entered);if(!parsed){alert(tr('invalidDate'));$('dateInput').focus();return}const date=parsed.display;$('dateInput').value=date;const m=+$('mainCount').value,mm=+$('mainMax').value,e=+$('extraCount').value,em=+$('extraMax').value,salt=$('salt').value.trim();const seedBase=`${parsed.iso}|${m}|${mm}|${e}|${em}|${salt}`;const main=uniqueNums(m,mm,mulberry32(hash32(seedBase+'|main')));const extra=e?uniqueNums(e,em,mulberry32(hash32(seedBase+'|extra'))):[]; lastResult={date,m,mm,e,em,salt,main,extra,created:new Date().toISOString()};renderResult()}
+function resultString(r){return `${displayDate(r.date)} • ${r.m}${r.e?`+${r.e}`:''} • ${r.main.join(', ')}${r.e?' + '+r.extra.join(', '):''}`}
+function renderResult(){const r=lastResult;if(!r)return;const balls=r.main.map(n=>`<div class="ball">${n}</div>`).join('');const extra=r.extra.length?`<div class="plus">+</div>${r.extra.map(n=>`<div class="ball extra">${n}</div>`).join('')}`:'';$('resultArea').className='';$('resultArea').innerHTML=`<div class="drawMeta"><span>${displayDate(r.date)}</span><span>${r.m}${r.e?`+${r.e}`:''} • 1–${r.mm}${r.e?` / 1–${r.em}`:''}</span></div><div class="balls">${balls}${extra}</div><div class="resultText" id="resultText">${resultString(r)}</div><div class="actions"><button class="btn secondary" id="copyBtn">${tr('copy')}</button><button class="btn secondary" id="saveBtn">${tr('save')}</button></div>`;$('copyBtn').onclick=copyResult;$('saveBtn').onclick=saveResult}
+async function copyResult(){if(!lastResult)return;const txt=resultString(lastResult);try{await navigator.clipboard.writeText(txt)}catch{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()} const b=$('copyBtn');const old=b.textContent;b.textContent=tr('copied');setTimeout(()=>b.textContent=old,1200)}
+function getHistory(){try{return JSON.parse(localStorage.getItem('lottoHistory')||'[]')}catch{return[]}}
+function saveResult(){if(!lastResult)return;let h=getHistory();h.unshift(lastResult);h=h.slice(0,30);localStorage.setItem('lottoHistory',JSON.stringify(h));$('saveBtn').textContent=tr('saved');renderHistory()}
+function renderHistory(){const h=getHistory();$('historyWrap').hidden=!h.length;const w=$('historyList');w.innerHTML='';h.forEach((r,i)=>{const row=document.createElement('div');row.className='histItem';row.innerHTML=`<div class="histText" title="${resultString(r)}">${resultString(r)}</div><div><button class="btn mini" data-copy="${i}">${tr('copy')}</button> <button class="btn mini" data-del="${i}">${tr('delete')}</button></div>`;w.appendChild(row)});w.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{const r=h[+b.dataset.copy];try{await navigator.clipboard.writeText(resultString(r))}catch{} b.textContent=tr('copied');setTimeout(()=>b.textContent=tr('copy'),900)});w.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{h.splice(+b.dataset.del,1);localStorage.setItem('lottoHistory',JSON.stringify(h));renderHistory()})}
+function applyLanguage(){document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));renderPresets();if(lastResult)renderResult();renderHistory();localStorage.setItem('lottoLang',$('language').value)}
+function reset(){selectPreset('6');$('salt').value='';$('dateInput').value='';lastResult=null;$('resultArea').className='empty';$('resultArea').innerHTML=`<div class="big">🎱</div><p>${tr('empty')}</p>`}
+$('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeBtn').onclick=()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;localStorage.setItem('lottoTheme',next)};$('fullscreenBtn').onclick=async()=>{if(!document.fullscreenElement)await document.documentElement.requestFullscreen?.();else await document.exitFullscreen?.()};
+['mainCount','mainMax','extraCount','extraMax'].forEach(id=>$(id).addEventListener('input',()=>{currentPreset='custom';renderPresets()}));
+$('dateInput').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);e.target.value=v});
+(function init(){$('language').value='en';document.documentElement.dataset.theme=localStorage.getItem('lottoTheme')||'dark';$('dateInput').value='';applyLanguage();selectPreset('6');renderHistory()})();
+</script>
+</body></html>
