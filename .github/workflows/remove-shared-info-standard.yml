@@ -1,0 +1,45 @@
+name: Remove shared Apps & Games Info standard
+
+on:
+  push:
+    paths:
+      - '.github/workflows/remove-shared-info-standard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove shared Info injection
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          changed=[]
+          p=Path('index.html')
+          if p.exists():
+              s=p.read_text(encoding='utf-8')
+              n=re.sub(r'\s*<script\s+src=["\']https://appsandgames\.org/assets/apps-games-info-standard\.js["\']\s*></script>\s*', '\n', s, flags=re.I)
+              if n!=s:
+                  p.write_text(n,encoding='utf-8'); changed.append(str(p))
+          p=Path('app/layout.tsx')
+          if p.exists():
+              s=p.read_text(encoding='utf-8')
+              n=re.sub(r'^import\s+Script\s+from\s+["\']next/script["\'];?\s*\n','',s,flags=re.M)
+              n=re.sub(r'\s*<Script\s+src=["\']https://appsandgames\.org/assets/apps-games-info-standard\.js["\'][^>]*/>\s*','',n,flags=re.I)
+              if n!=s:
+                  p.write_text(n,encoding='utf-8'); changed.append(str(p))
+          print('Changed:', changed)
+          PY
+      - name: Commit restoration
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html app/layout.tsx 2>/dev/null || true
+          git commit -m "Restore original Info section"
+          git push
