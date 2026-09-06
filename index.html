@@ -222,4 +222,6 @@ $('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onch
 $('dateInput').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);e.target.value=v});
 (function init(){$('language').value='en';document.documentElement.dataset.theme=localStorage.getItem('lottoTheme')||'dark';$('dateInput').value='';applyLanguage();selectPreset('6');renderHistory()})();
 </script>
+
+<script src="https://appsandgames.org/assets/apps-games-info-standard.js"></script>
 </body></html>
