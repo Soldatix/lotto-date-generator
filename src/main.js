@@ -1,15 +1,15 @@
 
-import { getHistory, addHistory, deleteHistory, getTheme, setTheme, setLanguage } from './js/storage.js';
+import { getHistory, addHistory, deleteHistory, setLanguage } from './js/storage.js';
 import { createClipboardHandlers } from './js/clipboard.js';
+import { createInfoModalHandlers } from './js/info-modal.js';
+import { applyTheme, toggleTheme } from './js/theme.js';
+import { toggleFullscreen } from './js/fullscreen.js';
 import { presets } from './data/presets.js';
-import { T, INFO_T } from './data/translations.js';
+import { T } from './data/translations.js';
 import { hash32, mulberry32, uniqueNums, todayDMY, parseDMY, displayDate } from './js/generator.js';
-function infoTr(k){const lang=$('language')?.value||'en';return (INFO_T[lang]||INFO_T.en)[k]||INFO_T.en[k]||k}
-function applyInfoLanguage(){document.querySelectorAll('[data-info-i18n]').forEach(el=>el.textContent=infoTr(el.dataset.infoI18n));document.querySelectorAll('.copy-wallet').forEach(b=>{if(!b.dataset.copied)b.textContent=infoTr('copy')})}
-function openInfo(){const o=$('infoOverlay');o.classList.add('open');o.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';applyInfoLanguage()}
-function closeInfo(){const o=$('infoOverlay');o.classList.remove('open');o.setAttribute('aria-hidden','true');document.body.style.overflow=''}
 
 const $=id=>document.getElementById(id); let currentPreset='6'; let lastResult=null;
+const { infoTr, applyInfoLanguage, openInfo, closeInfo, handleInfoOverlayClick, handleInfoKeydown }=createInfoModalHandlers({ $ });
 const { copyResult, copyHistory, copyWallet }=createClipboardHandlers({ $, getLastResult:()=>lastResult, resultString, tr, infoTr });
 function tr(k){return (T[$('language').value]||T.en)[k]||T.en[k]||k}
 function renderPresets(){ const wrap=$('presets'); wrap.innerHTML=''; presets.forEach(p=>{const b=document.createElement('button');b.className='chip'+(p.id===currentPreset?' active':'');b.textContent=p.id==='custom'?tr('custom'):p.label;b.onclick=()=>selectPreset(p.id);wrap.appendChild(b)}) }
@@ -23,8 +23,8 @@ function renderHistory(){const h=getHistory();$('historyWrap').hidden=!h.length;
 function applyLanguage(){document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));renderPresets();if(lastResult)renderResult();renderHistory();applyInfoLanguage();setLanguage($('language').value)}
 function reset(){selectPreset('6');$('salt').value='';$('dateInput').value='';lastResult=null;$('resultArea').className='empty';$('resultArea').innerHTML=`<div class="big">🎱</div><p>${tr('empty')}</p>`}
 
-$('infoBtn').onclick=openInfo;$('infoX').onclick=closeInfo;$('infoClose').onclick=closeInfo;$('infoOverlay').addEventListener('click',e=>{if(e.target===$('infoOverlay'))closeInfo()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('infoOverlay').classList.contains('open'))closeInfo()});document.querySelectorAll('.copy-wallet').forEach(b=>b.onclick=()=>copyWallet(b));
-$('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeBtn').onclick=()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;setTheme(next)};$('fullscreenBtn').onclick=async()=>{if(!document.fullscreenElement)await document.documentElement.requestFullscreen?.();else await document.exitFullscreen?.()};
+$('infoBtn').onclick=openInfo;$('infoX').onclick=closeInfo;$('infoClose').onclick=closeInfo;$('infoOverlay').addEventListener('click',handleInfoOverlayClick);document.addEventListener('keydown',handleInfoKeydown);document.querySelectorAll('.copy-wallet').forEach(b=>b.onclick=()=>copyWallet(b));
+$('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeBtn').onclick=toggleTheme;$('fullscreenBtn').onclick=toggleFullscreen;
 ['mainCount','mainMax','extraCount','extraMax'].forEach(id=>$(id).addEventListener('input',()=>{currentPreset='custom';renderPresets()}));
 $('dateInput').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);e.target.value=v});
-(function init(){$('language').value='en';document.documentElement.dataset.theme=getTheme();$('dateInput').value='';applyLanguage();selectPreset('6');renderHistory()})();
+(function init(){$('language').value='en';applyTheme();$('dateInput').value='';applyLanguage();selectPreset('6');renderHistory()})();
