@@ -1,0 +1,21 @@
+{
+  "name": "lotto-date-generator",
+  "version": "1.0.0",
+  "description": "Standalone browser application for generating deterministic lottery combinations from a selected date.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Soldatix/lotto-date-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Soldatix/lotto-date-generator/issues"
+  },
+  "devDependencies": {
+    "vite": "^8.3.0"
+  },
+  "private": true
+}
