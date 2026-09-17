@@ -1,0 +1,6 @@
+export function hash32(str){let h=2166136261>>>0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+export function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+export function uniqueNums(count,max,rng){const arr=Array.from({length:max},(_,i)=>i+1);for(let i=arr.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr.slice(0,count).sort((a,b)=>a-b)}
+export function todayDMY(){const d=new Date();return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`}
+export function parseDMY(value){const m=value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(!m)return null;const day=+m[1],month=+m[2],year=+m[3];if(year<1000||year>9999)return null;const d=new Date(year,month-1,day);if(d.getFullYear()!==year||d.getMonth()!==month-1||d.getDate()!==day)return null;return {display:`${m[1]}/${m[2]}/${m[3]}`,iso:`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`}}
+export function displayDate(value){if(/^\d{2}\/\d{2}\/\d{4}$/.test(value||''))return value;const m=(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}/${m[2]}/${m[1]}`:(value||'')}
