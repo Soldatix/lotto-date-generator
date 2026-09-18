@@ -1,3 +1,51 @@
+export const WEB_INSTALL_T = {
+  en: {
+    title: 'Install Date Lotto Generator',
+    description: 'Install Date Lotto Generator on this device. It opens in its own app window like a regular application and can continue to work offline after the first successful load.',
+    install: 'Install Date Lotto Generator', continue: 'Continue in browser',
+    waiting: 'Preparing the browser installation option…', ready: 'Ready to install.',
+    unavailable: 'If installation is not available here, use your browser menu and choose Install app. If Date Lotto Generator is already installed, you can launch it from the Start menu or your app launcher.',
+    installing: 'Installation started…', dismissed: 'Installation was not completed. Reload this page to try again.',
+    installed: 'Date Lotto Generator is installed.'
+  },
+  hr: {
+    title: 'Instaliraj Date Lotto Generator',
+    description: 'Instalirajte Date Lotto Generator na ovaj uređaj. Pokreće se u vlastitom prozoru poput obične aplikacije i nakon prvog uspješnog učitavanja može nastaviti raditi i bez internetske veze.',
+    install: 'Instaliraj Date Lotto Generator', continue: 'Nastavi u pregledniku',
+    waiting: 'Priprema se mogućnost instalacije iz preglednika…', ready: 'Spremno za instalaciju.',
+    unavailable: 'Ako instalacija ovdje nije dostupna, u izborniku preglednika odaberite Instaliraj aplikaciju. Ako je Date Lotto Generator već instaliran, možete ga pokrenuti iz Start izbornika ili izbornika aplikacija.',
+    installing: 'Instalacija je pokrenuta…', dismissed: 'Instalacija nije dovršena. Ponovno učitajte ovu stranicu za novi pokušaj.',
+    installed: 'Date Lotto Generator je instaliran.'
+  },
+  de: {
+    title: 'Date Lotto Generator installieren',
+    description: 'Installieren Sie Date Lotto Generator auf diesem Gerät. Die App öffnet sich wie eine normale Anwendung in einem eigenen Fenster und kann nach dem ersten erfolgreichen Laden auch offline weiter genutzt werden.',
+    install: 'Date Lotto Generator installieren', continue: 'Im Browser fortfahren',
+    waiting: 'Die Installationsoption des Browsers wird vorbereitet…', ready: 'Bereit zur Installation.',
+    unavailable: 'Falls die Installation hier nicht verfügbar ist, wählen Sie im Browsermenü „App installieren“. Wenn Date Lotto Generator bereits installiert ist, können Sie die App über das Startmenü oder Ihre App-Übersicht öffnen.',
+    installing: 'Installation gestartet…', dismissed: 'Die Installation wurde nicht abgeschlossen. Laden Sie diese Seite neu, um es erneut zu versuchen.',
+    installed: 'Date Lotto Generator ist installiert.'
+  },
+  it: {
+    title: 'Installa Date Lotto Generator',
+    description: 'Installa Date Lotto Generator su questo dispositivo. Si apre in una finestra dedicata come una normale applicazione e può continuare a funzionare offline dopo il primo caricamento riuscito.',
+    install: 'Installa Date Lotto Generator', continue: 'Continua nel browser',
+    waiting: 'Preparazione dell’opzione di installazione del browser…', ready: 'Pronto per l’installazione.',
+    unavailable: 'Se l’installazione non è disponibile qui, apri il menu del browser e scegli Installa app. Se Date Lotto Generator è già installato, puoi avviarlo dal menu Start o dall’elenco delle applicazioni.',
+    installing: 'Installazione avviata…', dismissed: 'L’installazione non è stata completata. Ricarica questa pagina per riprovare.',
+    installed: 'Date Lotto Generator è installato.'
+  },
+  es: {
+    title: 'Instalar Date Lotto Generator',
+    description: 'Instala Date Lotto Generator en este dispositivo. Se abre en su propia ventana como una aplicación normal y puede seguir funcionando sin conexión después de la primera carga correcta.',
+    install: 'Instalar Date Lotto Generator', continue: 'Continuar en el navegador',
+    waiting: 'Preparando la opción de instalación del navegador…', ready: 'Listo para instalar.',
+    unavailable: 'Si la instalación no está disponible aquí, abre el menú del navegador y elige Instalar aplicación. Si Date Lotto Generator ya está instalado, puedes abrirlo desde el menú Inicio o el lanzador de aplicaciones.',
+    installing: 'Instalación iniciada…', dismissed: 'La instalación no se ha completado. Vuelve a cargar esta página para intentarlo de nuevo.',
+    installed: 'Date Lotto Generator está instalado.'
+  }
+};
+
 export const T={
 en:{saltPlaceholder:"e.g. name, city, lucky word",footer:"Apps & Games • Local data • Free to use",languageLabel:"Language",infoLabel:"Information / Donations",themeLabel:"Theme",themeLight:"Light",themeDark:"Dark",themeSystem:"System",fullscreenLabel:"Toggle fullscreen",saveFailed:"Save failed",deleteFailed:"Could not delete the saved combination.",title:'Date Lotto Generator',subtitle:'Generate repeatable lotto combinations from any date.',setup:'Generator setup',date:'Date',format:'Lotto format',mainCount:'Main numbers count',mainMax:'Main number range (1–N)',extraCount:'Extra numbers count',extraMax:'Extra number range (1–N)',salt:'Optional personal key',generate:'Generate numbers',reset:'Reset',hint:'The same date + settings + personal key always produces the same combination.',warning:'For entertainment only. Lottery draws are random; this generator cannot improve the mathematical odds of winning.',result:'Generated combination',empty:'Choose a date and generate your combination.',copy:'Copy',save:'Save',saved:'Saved',history:'Saved combinations',delete:'Delete',invalid:'Check the selected ranges and number counts.',invalidDate:'Enter a valid date in dd/mm/yyyy format.',copied:'Copied!',copyFailed:'Copy failed',custom:'Custom'},
 hr:{saltPlaceholder:"npr. ime, grad, sretna riječ",footer:"Apps & Games • Lokalni podaci • Besplatno korištenje",languageLabel:"Jezik",infoLabel:"Informacije / Donacije",themeLabel:"Tema",themeLight:"Svijetla",themeDark:"Tamna",themeSystem:"Sustav",fullscreenLabel:"Uključi/isključi puni zaslon",saveFailed:"Spremanje nije uspjelo",deleteFailed:"Spremljena kombinacija nije mogla biti obrisana.",title:'Generator loto brojeva po datumu',subtitle:'Generiraj ponovljivu loto kombinaciju na osnovu bilo kojeg datuma.',setup:'Postavke generatora',date:'Datum',format:'Vrsta Lota',mainCount:'Broj glavnih brojeva',mainMax:'Raspon glavnih brojeva (1–N)',extraCount:'Broj dodatnih brojeva',extraMax:'Raspon dodatnih brojeva (1–N)',salt:'Opcionalni osobni ključ',generate:'Generiraj brojeve',reset:'Resetiraj',hint:'Isti datum + postavke + osobni ključ uvijek daju istu kombinaciju.',warning:'Samo za zabavu. Loto izvlačenja su nasumična; ovaj generator ne može povećati matematičku vjerojatnost dobitka.',result:'Generirana kombinacija',empty:'Odaberi datum i generiraj kombinaciju.',copy:'Kopiraj',save:'Spremi',saved:'Spremljeno',history:'Spremljene kombinacije',delete:'Obriši',invalid:'Provjeri raspon i broj odabranih brojeva.',invalidDate:'Unesi ispravan datum u formatu dd/mm/yyyy.',copied:'Kopirano!',copyFailed:'Kopiranje nije uspjelo',custom:'Prilagođeno'},

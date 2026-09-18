@@ -16,7 +16,7 @@ function fixture(values = initial()) {
   const announce = (...args) => { messages.push(args); $(args[1]).textContent = args[0]; };
   announce.clear = () => {};
   const context = vm.createContext({ $, announce, confirmed: true, lastResult: structuredClone(entry), currentPreset: 'custom',
-    copyResult() {}, saveResult() {}, renderPresets() {},
+    copyResult() {}, saveResult() {}, renderPresets() {}, webInstall: { applyLanguage() {} },
     document: { documentElement: { dataset: {} }, getElementById: $, querySelectorAll: () => [], createElement: () => ({}) },
     window: { confirm(message) { confirmations.push(message); return context.confirmed; }, matchMedia: () => ({ matches: true, addEventListener() {} }) },
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem(key) { removals.push(key); data.delete(key); } }

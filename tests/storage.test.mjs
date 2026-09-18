@@ -101,7 +101,7 @@ test('actual language initialization and change handler restore and persist the 
   const context = vm.createContext({ ...storage, lastResult: null, announce: { clear() {} },
     $: id => { if (!elements.has(id)) elements.set(id, { value: '' }); return elements.get(id); },
     document: { documentElement: {}, querySelectorAll: () => [] },
-    applyTheme() {}, renderPresets() {}, renderHistory() {}, applyInfoLanguage() {},
+    applyTheme() {}, renderPresets() {}, renderHistory() {}, applyInfoLanguage() {}, webInstall: { applyLanguage() {} },
     selectPreset() {}, generate() {}, reset() {}, selectTheme() {}, toggleFullscreen() {} });
   vm.runInContext(lines.find(line => line.startsWith('function applyLanguage(')), context);
   vm.runInContext(lines.find(line => line.startsWith("$('generateBtn').onclick=")), context);

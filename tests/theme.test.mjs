@@ -94,7 +94,7 @@ test('native theme select translates its visible options, accessible name and ti
   select.setAttribute = (key, value) => { select[key] = value; };
   f.context.document.querySelectorAll = selector => selector === '[data-i18n]' ? options : selector === '[data-i18n-name]' ? [select] : [];
   Object.assign(f.context, { announce: { clear() {} }, lastResult: null,
-    renderPresets() {}, renderHistory() {}, applyInfoLanguage() {} });
+    renderPresets() {}, renderHistory() {}, applyInfoLanguage() {}, webInstall: { applyLanguage() {} } });
   for (const name of ['tr', 'applyLanguage']) vm.runInContext(main.split('\n').find(line => line.startsWith(`function ${name}(`)), f.context);
   const expected = { en: ['Theme', 'Light', 'Dark', 'System'], hr: ['Tema', 'Svijetla', 'Tamna', 'Sustav'],
     de: ['Design', 'Hell', 'Dunkel', 'System'], it: ['Tema', 'Chiaro', 'Scuro', 'Sistema'], es: ['Tema', 'Claro', 'Oscuro', 'Sistema'] };

@@ -58,6 +58,18 @@
 <link rel="stylesheet" href="./src/styles/main.css" />
 </head>
 <body>
+<section id="webInstallBanner" class="web-install-banner" hidden aria-labelledby="webInstallTitle">
+  <div class="logo web-install-icon" aria-hidden="true">L</div>
+  <div class="web-install-banner-content">
+    <strong id="webInstallTitle"></strong>
+    <p id="webInstallDescription"></p>
+    <p id="webInstallStatus" class="web-install-status" role="status" aria-live="polite"></p>
+    <div class="web-install-actions">
+      <button id="installWebAppButton" class="btn primary" type="button" disabled></button>
+      <button id="continueWebButton" class="btn secondary" type="button"></button>
+    </div>
+  </div>
+</section>
 <div class="app">
   <div class="topbar">
     <div class="brand"><div class="logo">L</div><div><h1 data-i18n="title">Date Lotto Generator</h1><div class="subtitle" data-i18n="subtitle">Generate repeatable lotto combinations from any date.</div></div></div>

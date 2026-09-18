@@ -250,7 +250,7 @@ test('language change updates all four toolbar names and titles without announci
   const context = vm.createContext({ $: () => language, lastResult: {},
     tr: key => T[language.value][key], announce: { clear() { clears++; } },
     document: { documentElement: {}, querySelectorAll: selector => selector === '[data-i18n-name]' ? controls : [] },
-    renderPresets() {}, renderResult() {}, renderHistory() {}, applyInfoLanguage() {}, setLanguage() {} });
+    renderPresets() {}, renderResult() {}, renderHistory() {}, applyInfoLanguage() {}, webInstall: { applyLanguage() {} }, setLanguage() {} });
   runFunction(context, 'applyLanguage');
   for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
     language.value = lang;

@@ -28,7 +28,7 @@ function fixture(initial = [['lottoHistory', '[]'], ['lottoLang', 'en'], ['lotto
     matchMedia: () => ({ matches: true, addEventListener() {} }) },
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) },
     confirmed: true, announce: { clear() {} }, lastResult: null,
-    renderPresets() {}, applyInfoLanguage() {} });
+    renderPresets() {}, applyInfoLanguage() {}, webInstall: { applyLanguage() {} } });
   for (const path of ['src/js/generator.js', 'src/js/storage.js', 'src/js/theme.js', 'src/data/translations.js', 'src/js/backup.js']) {
     vm.runInContext(read(path).replace(/^import .*\r?\n/gm, '').replaceAll('export ', ''), context);
   }
