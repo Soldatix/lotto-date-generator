@@ -9,6 +9,7 @@
     "test": "node --test tests/*.test.mjs",
     "test:pwa": "node tests/pwa-browser.mjs",
     "test:history": "node tests/history-browser.mjs",
+    "test:focus": "node --test tests/focus-browser.mjs",
     "test:translations": "node --test tests/translations-browser.mjs"
   },
   "repository": {

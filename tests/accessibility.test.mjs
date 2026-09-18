@@ -205,14 +205,15 @@ test('all input labels and persistent polite status regions are connected', () =
 
 test('preset selection and every numeric input keep pressed state synchronized', () => {
   const elements = new Map();
-  const element = () => ({ children: [], attributes: {}, listeners: {},
+  const element = () => ({ children: [], attributes: {}, dataset: {}, listeners: {},
     set innerHTML(value) { this.children = []; },
     setAttribute(key, value) { this.attributes[key] = value; },
     appendChild(child) { this.children.push(child); },
+    focus() { document.activeElement = this; },
     addEventListener(event, callback) { this.listeners[event] = callback; } });
   const $ = id => { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); };
-  const context = vm.createContext({ $, presets, currentPreset: '6', tr: key => key,
-    document: { createElement: element } });
+  const document = { activeElement: null, createElement: element };
+  const context = vm.createContext({ $, presets, currentPreset: '6', tr: key => key, document });
   for (const name of ['renderPresets', 'selectPreset']) runFunction(context, name);
   const check = id => {
     assert.equal($('presets').children.length, presets.length);
@@ -221,7 +222,16 @@ test('preset selection and every numeric input keep pressed state synchronized',
       assert.equal(button.className.includes('active'), presets[i].id === id);
     });
   };
-  for (const preset of presets) { context.selectPreset(preset.id); check(preset.id); }
+  context.renderPresets();
+  const originalButtons = [...$('presets').children];
+  for (const [i, preset] of presets.entries()) {
+    const button = $('presets').children[i];
+    button.focus();
+    button.onclick();
+    check(preset.id);
+    assert.equal(document.activeElement, button);
+    assert.deepEqual($('presets').children, originalButtons);
+  }
   vm.runInContext(main.split('\n').find(line => line.startsWith("['mainCount'")), context);
   for (const id of ['mainCount', 'mainMax', 'extraCount', 'extraMax']) {
     context.selectPreset('6');

@@ -1,4 +1,4 @@
-export async function copyText(text) {
+export async function copyText(text, focusTarget) {
   try {
     await navigator.clipboard.writeText(text);
     return true;
@@ -17,6 +17,7 @@ export async function copyText(text) {
     return false;
   } finally {
     textarea?.remove();
+    try { focusTarget?.focus?.(); } catch { /* Focus restoration must not change the copy result. */ }
   }
 }
 
@@ -31,7 +32,7 @@ export function createClipboardHandlers({ $, getLastResult, resultString, tr, in
     button.textContent = translate('copy');
     if (wallet) delete button.dataset.copied;
 
-    const success = await copyText(text);
+    const success = await copyText(text, button);
     // A slower earlier request must not overwrite the latest button feedback.
     if (attempts.get(button) !== attempt) return success;
     button.textContent = translate(success ? 'copied' : 'copyFailed');

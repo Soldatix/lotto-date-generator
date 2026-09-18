@@ -23,16 +23,17 @@ function setup(kind, language, api, fallback) {
   const writes = [];
   const announcements = [];
   const button = { dataset: { wallet: 'wallet-address' },
+    focus() { context.document.activeElement = this; calls.focused++; },
     get textContent() { return writes.at(-1); },
     set textContent(value) { writes.push(value); } };
   const timers = new Map();
-  const calls = { api: [], fallback: [], removed: 0, selected: 0, appended: [] };
+  const calls = { api: [], fallback: [], removed: 0, selected: 0, focused: 0, appended: [] };
   let timerId = 0;
   const context = vm.createContext({ navigator: {},
     document: {
       createElement(tag) {
         assert.equal(tag, 'textarea');
-        return { value: '', select() { calls.selected++; }, remove() { calls.removed++; } };
+        return { value: '', select() { calls.selected++; context.document.activeElement = this; }, remove() { calls.removed++; } };
       },
       body: { appendChild(element) { calls.appended.push(element); } },
       execCommand(command) {
@@ -49,6 +50,7 @@ function setup(kind, language, api, fallback) {
     return api === 'reject' ? Promise.reject(new Error('Denied')) : Promise.resolve();
   } };
   vm.runInContext(source, context);
+  context.document.activeElement = button;
   const result = { text: '17/09/2026 • 6 • 1, 2, 3, 4, 5, 6' };
   const handlers = context.createClipboardHandlers({ $: () => button,
     getLastResult: () => result, resultString: r => r.text,
@@ -84,6 +86,8 @@ for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
         assert.deepEqual(h.calls.fallback, usedFallback ? ['copy'] : []);
         assert.equal(h.calls.selected, usedFallback ? 1 : 0);
         assert.equal(h.calls.removed, usedFallback ? 1 : 0);
+        assert.equal(h.calls.focused, usedFallback ? 1 : 0);
+        assert.equal(h.context.document.activeElement, h.button);
         if (usedFallback) assert.equal(h.calls.appended[0].value, h.expectedText);
         assert.equal(h.timers.size, 1);
         assert.equal([...h.timers.values()][0].delay, kind === 'history' ? 900 : 1200);
