@@ -61,6 +61,57 @@ test('normal Save/Delete and theme/language round trips', () => {
   assert.deepEqual([...data.keys()], ['lottoHistory', 'lottoTheme', 'lottoLang']);
 });
 
+test('language storage accepts only the five supported values', () => {
+  for (const language of ['en', 'hr', 'de', 'it', 'es', 'fr', '', 'HR', ' hr', 'hr ', 'constructor']) {
+    reset();
+    data.set('lottoLang', language);
+    assert.equal(storage.getLanguage(), ['en', 'hr', 'de', 'it', 'es'].includes(language) ? language : 'en');
+    assert.equal(data.get('lottoLang'), language, 'reading must not write');
+  }
+});
+
+test('actual language initialization and change handler restore and persist the selection', () => {
+  const source = readFileSync('src/main.js', 'utf8');
+  const lines = source.split('\n');
+  const elements = new Map();
+  const context = vm.createContext({ ...storage, lastResult: null,
+    $: id => { if (!elements.has(id)) elements.set(id, { value: '' }); return elements.get(id); },
+    document: { documentElement: {}, querySelectorAll: () => [] },
+    applyTheme() {}, renderPresets() {}, renderHistory() {}, applyInfoLanguage() {},
+    selectPreset() {}, generate() {}, reset() {}, toggleTheme() {}, toggleFullscreen() {} });
+  vm.runInContext(lines.find(line => line.startsWith('function applyLanguage(')), context);
+  vm.runInContext(lines.find(line => line.startsWith("$('generateBtn').onclick=")), context);
+  const init = lines.find(line => line.startsWith('(function init()'));
+  for (const saved of [undefined, 'hr', 'de', 'it', 'es', 'en', 'fr']) {
+    reset();
+    if (saved !== undefined) data.set('lottoLang', saved);
+    const operations = [];
+    localStorage.getItem = key => { operations.push(`read:${key}`); return data.get(key) ?? null; };
+    localStorage.setItem = (key, value) => { operations.push(`write:${key}`); data.set(key, value); };
+    vm.runInContext(init, context);
+    const expected = saved === undefined || saved === 'fr' ? 'en' : saved;
+    assert.equal(elements.get('language').value, expected);
+    assert.equal(context.document.documentElement.lang, expected);
+    assert.equal(data.get('lottoLang'), expected);
+    assert.deepEqual(operations, ['read:lottoLang', 'write:lottoLang']);
+  }
+  reset();
+  localStorage.getItem = () => { throw new DOMException('Blocked', 'SecurityError'); };
+  assert.doesNotThrow(() => vm.runInContext(init, context));
+  assert.equal(elements.get('language').value, 'en');
+  assert.equal(context.document.documentElement.lang, 'en');
+  reset();
+  for (const language of ['hr', 'de', 'it', 'es', 'en']) {
+    elements.get('language').value = language;
+    elements.get('language').onchange();
+    assert.equal(data.get('lottoLang'), language);
+    elements.get('language').value = '';
+    vm.runInContext(init, context);
+    assert.equal(elements.get('language').value, language);
+    assert.equal(context.document.documentElement.lang, language);
+  }
+});
+
 test('SecurityError from getItem or localStorage getter and unavailable storage', () => {
   for (const mode of ['getItem', 'getter', 'missing']) {
     reset();

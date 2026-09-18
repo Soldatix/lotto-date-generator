@@ -65,5 +65,8 @@ export function deleteHistory(history, index) {
 
 export function getTheme() { return readItem('lottoTheme', 'dark'); }
 export function setTheme(theme) { return writeItem('lottoTheme', theme); }
-export function getLanguage() { return readItem('lottoLang', 'en'); }
+export function getLanguage() {
+  const language = readItem('lottoLang', 'en');
+  return ['en', 'hr', 'de', 'it', 'es'].includes(language) ? language : 'en';
+}
 export function setLanguage(language) { return writeItem('lottoLang', language); }

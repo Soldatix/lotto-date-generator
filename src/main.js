@@ -1,5 +1,5 @@
 
-import { getHistory, addHistory, deleteHistory, setLanguage } from './js/storage.js';
+import { getHistory, addHistory, deleteHistory, getLanguage, setLanguage } from './js/storage.js';
 import { createClipboardHandlers } from './js/clipboard.js';
 import { createInfoModalHandlers } from './js/info-modal.js';
 import { applyTheme, toggleTheme } from './js/theme.js';
@@ -27,4 +27,4 @@ $('infoBtn').onclick=openInfo;$('infoX').onclick=closeInfo;$('infoClose').onclic
 $('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeBtn').onclick=toggleTheme;$('fullscreenBtn').onclick=toggleFullscreen;
 ['mainCount','mainMax','extraCount','extraMax'].forEach(id=>$(id).addEventListener('input',()=>{currentPreset='custom';renderPresets()}));
 $('dateInput').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);e.target.value=v});
-(function init(){$('language').value='en';applyTheme();$('dateInput').value='';applyLanguage();selectPreset('6');renderHistory()})();
+(function init(){$('language').value=getLanguage();applyTheme();$('dateInput').value='';applyLanguage();selectPreset('6');renderHistory()})();
