@@ -4,6 +4,51 @@ import { test } from 'node:test';
 import vm from 'node:vm';
 
 const source = readFileSync('src/js/pwa.js', 'utf8');
+const seoTitle = 'Date Lotto Generator | Free Online Lotto Number Generator';
+
+for (const listenerApi of ['modern', 'legacy']) {
+test(`PWA title follows standalone mode and restores the browser SEO title (${listenerApi} listener)`, () => {
+  for (const initiallyStandalone of [false, true]) {
+    let onChange;
+    const media = { matches: initiallyStandalone };
+    if (listenerApi === 'modern') {
+      media.addEventListener = (type, listener) => {
+        assert.equal(type, 'change'); onChange = listener;
+      };
+      media.addListener = () => assert.fail('modern API must take precedence');
+    } else {
+      media.addListener = listener => { onChange = listener; };
+    }
+    const document = { title: seoTitle };
+    const context = vm.createContext({ document, navigator: {}, window: { matchMedia(query) {
+      assert.equal(query, '(display-mode: standalone)'); return media;
+    } } });
+    vm.runInContext(source.replaceAll('export ', '').replaceAll('import.meta.env.PROD', 'false')
+      .replaceAll('import.meta.env.BASE_URL', "'./'") + '\ninitializePwaTitle();', context);
+    assert.equal(document.title, initiallyStandalone ? 'Date Lotto Generator' : seoTitle);
+    assert.equal(typeof onChange, 'function');
+    for (const matches of [true, false, true, false]) {
+      media.matches = matches;
+      onChange();
+      assert.equal(document.title, matches ? 'Date Lotto Generator' : seoTitle);
+    }
+  }
+});
+}
+
+test('iOS standalone uses the short title while source SEO metadata stays descriptive', () => {
+  const document = { title: seoTitle };
+  const context = vm.createContext({ document, navigator: { standalone: true },
+    window: { matchMedia: () => ({ matches: false, addEventListener() {} }) } });
+  vm.runInContext(source.replaceAll('export ', '').replaceAll('import.meta.env.PROD', 'false')
+    .replaceAll('import.meta.env.BASE_URL', "'./'") + '\ninitializePwaTitle();', context);
+  assert.equal(document.title, 'Date Lotto Generator');
+  const html = readFileSync('index.html', 'utf8');
+  assert.ok(html.includes(`<title>${seoTitle}</title>`));
+  assert.ok(html.includes(`<meta property="og:title" content="${seoTitle}"`));
+  assert.ok(html.includes(`<meta name="twitter:title" content="${seoTitle}"`));
+});
+
 test('PWA registration requires production, secure HTTP(S), and browser support', async () => {
   for (const prod of [false, true]) for (const secure of [false, true])
     for (const protocol of ['file:', 'http:', 'https:']) for (const supported of [false, true]) {
@@ -14,7 +59,7 @@ test('PWA registration requires production, secure HTTP(S), and browser support'
         navigator: supported ? { serviceWorker: { register: (...args) => { calls.push(args); return Promise.resolve(); } } } : {},
         console,
       });
-      vm.runInContext(source.replace('export ', '').replaceAll('import.meta.env.PROD', String(prod))
+      vm.runInContext(source.replaceAll('export ', '').replaceAll('import.meta.env.PROD', String(prod))
         .replaceAll('import.meta.env.BASE_URL', "'./'") + '\nregisterPwa();', context);
       assert.equal(calls.length, Number(prod && secure && protocol !== 'file:' && supported));
       if (calls.length) {
@@ -33,7 +78,7 @@ test('registration waits for load and handles failure without affecting app', as
     navigator: { serviceWorker: { register: () => Promise.reject(new Error('offline')) } },
     console: { warn: (...args) => { warning = args; } },
   });
-  vm.runInContext(source.replace('export ', '').replaceAll('import.meta.env.PROD', 'true')
+  vm.runInContext(source.replaceAll('export ', '').replaceAll('import.meta.env.PROD', 'true')
     .replaceAll('import.meta.env.BASE_URL', "'./'") + '\nregisterPwa();', context);
   assert.ok(listener); listener();
   await new Promise(resolve => setImmediate(resolve));

@@ -1,6 +1,7 @@
 import { version } from '../package.json';
-import { registerPwa } from './js/pwa.js';
+import { initializePwaTitle, registerPwa } from './js/pwa.js';
 
+initializePwaTitle();
 registerPwa();
 
 import { getHistory, addHistory, deleteHistory, getLanguage, setLanguage } from './js/storage.js';

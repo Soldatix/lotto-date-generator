@@ -1,3 +1,19 @@
+export function initializePwaTitle() {
+  const browserTitle = document.title;
+  const standalone = window.matchMedia('(display-mode: standalone)');
+  const updateTitle = () => {
+    document.title = standalone.matches || navigator.standalone === true
+      ? 'Date Lotto Generator'
+      : browserTitle;
+  };
+  updateTitle();
+  if (typeof standalone.addEventListener === 'function') {
+    standalone.addEventListener('change', updateTitle);
+  } else if (typeof standalone.addListener === 'function') {
+    standalone.addListener(updateTitle);
+  }
+}
+
 // Native registration leaves updates waiting until all app tabs have closed.
 // No controllerchange reload, skipWaiting message, or localStorage changes.
 export function registerPwa() {
