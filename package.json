@@ -7,7 +7,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test tests/*.test.mjs",
-    "test:pwa": "node tests/pwa-browser.mjs"
+    "test:pwa": "node tests/pwa-browser.mjs",
+    "test:history": "node tests/history-browser.mjs"
   },
   "repository": {
     "type": "git",

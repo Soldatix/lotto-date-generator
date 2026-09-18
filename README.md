@@ -67,3 +67,10 @@ all languages/presets, History, Theme, Info, Backup v1/Restore/Reset, then build
 temporary second version. It checks waiting across multiple tabs, activation, cache
 cleanup, preserved localStorage, and offline reopening of the new version. Temporary
 builds and the isolated browser context are removed afterwards.
+
+`npm run test:history` uses the same optional Playwright/Chrome setup (including
+`PLAYWRIGHT_MODULE` and `PWA_BROWSER`). It checks the Astra mobile History overflow
+regression at 320, 360, 390, 768 and 1280 px in all five languages, using one and
+multiple saved entries, long personal keys and maximum-length 20+10 results.
+It verifies document/card/content widths, readable untruncated text, mobile touch
+targets and working History Copy/Delete controls.
