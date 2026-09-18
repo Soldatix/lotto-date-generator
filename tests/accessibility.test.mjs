@@ -82,6 +82,7 @@ test('Info dialog semantics, initial focus and keyboard access to every payment 
     assert.ok(f.controls.includes(f.document.activeElement));
   }
   assert.equal(visited.size, f.controls.length);
+  assert.ok(visited.has(f.elements.resetStoredData));
   f.elements.infoX.focus();
   f.tab(true);
   assert.equal(f.document.activeElement, f.elements.infoClose);
@@ -119,6 +120,23 @@ test('Info language changes preserve focus and both trap boundaries in every lan
     f.tab();
     assert.equal(f.document.activeElement, f.elements.infoX);
   }
+});
+
+test('Reset control retains focus when successful reset changes the modal language to English', () => {
+  const f = modalFixture();
+  f.context.openInfo();
+  f.elements.language.value = 'hr';
+  f.context.applyInfoLanguage();
+  f.elements.resetStoredData.focus();
+  f.elements.language.value = 'en';
+  f.context.applyInfoLanguage();
+  assert.equal(f.document.activeElement, f.elements.resetStoredData);
+  assert.equal(f.elements.resetStoredData.textContent, 'Reset stored data');
+  f.tab();
+  assert.ok(f.controls.includes(f.document.activeElement));
+  f.elements.infoClose.focus();
+  f.tab();
+  assert.equal(f.document.activeElement, f.elements.infoX);
 });
 
 test('Info handles unavailable opener, changed controls, outside focus and clicks inside the modal', () => {

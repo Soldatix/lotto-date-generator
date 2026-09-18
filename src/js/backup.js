@@ -1,4 +1,15 @@
-import { getHistory, getLanguage, getTheme, validHistoryEntry, HISTORY_LIMIT, restoreData } from './storage.js';
+import { getHistory, getLanguage, getTheme, validHistoryEntry, HISTORY_LIMIT, restoreData, resetStoredData } from './storage.js';
+
+export function createResetHandler({ $, tr, onReset, announce, confirmReset = message => window.confirm(message) }) {
+  return () => {
+    if (!confirmReset(tr('resetConfirm'))) return;
+    const result = resetStoredData();
+    if (result === 'resetSucceeded') onReset();
+    // Use the repeatable live-status mechanism for consecutive identical errors.
+    $('backupStatus').dataset.infoI18n = result;
+    announce(tr(result), 'backupStatus');
+  };
+}
 
 const fields = ['date', 'm', 'mm', 'e', 'em', 'salt', 'main', 'extra', 'created'];
 const record = value => value && typeof value === 'object' && !Array.isArray(value);

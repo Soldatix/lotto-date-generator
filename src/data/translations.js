@@ -77,3 +77,42 @@ const BACKUP_T = {
   }
 };
 for (const language of Object.keys(BACKUP_T)) Object.assign(INFO_T[language], BACKUP_T[language]);
+
+export const RESET_T = {
+  en: {
+    resetStoredData: 'Reset stored data',
+    resetConfirm: 'Delete all stored data for Date Lotto Generator?\n\nThis deletes:\n• Saved combinations / History\n• Language preference\n• Theme preference\n\nThis cannot be undone unless you already have a backup. Your current generator input and unsaved combination will stay unchanged.',
+    resetSucceeded: 'Stored data deleted. History is empty, language is English and theme is System.',
+    resetFailed: 'Could not delete stored data. Previous data was preserved.',
+    resetRollbackFailed: 'Reset failed and previous data could not be fully restored. Some stored data may be missing. Restore a backup if available.'
+  },
+  hr: {
+    resetStoredData: 'Obriši spremljene podatke',
+    resetConfirm: 'Obrisati sve spremljene podatke aplikacije Date Lotto Generator?\n\nBrišu se:\n• Spremljene kombinacije / Povijest\n• Postavka jezika\n• Postavka teme\n\nRadnja se ne može poništiti osim ako već imate sigurnosnu kopiju. Trenutni unos u generatoru i nespremljena kombinacija ostaju nepromijenjeni.',
+    resetSucceeded: 'Spremljeni podaci su obrisani. Povijest je prazna, jezik je engleski, a tema prati sustav.',
+    resetFailed: 'Brisanje spremljenih podataka nije uspjelo. Prethodni podaci su sačuvani.',
+    resetRollbackFailed: 'Brisanje nije uspjelo, a prethodni podaci nisu u potpunosti vraćeni. Neki spremljeni podaci možda nedostaju. Vratite sigurnosnu kopiju ako je imate.'
+  },
+  de: {
+    resetStoredData: 'Gespeicherte Daten löschen',
+    resetConfirm: 'Alle gespeicherten Daten von Date Lotto Generator löschen?\n\nGelöscht werden:\n• Gespeicherte Kombinationen / Verlauf\n• Spracheinstellung\n• Designeinstellung\n\nDies kann nur rückgängig gemacht werden, wenn du bereits eine Sicherung hast. Deine aktuelle Generatoreingabe und ungespeicherte Kombination bleiben unverändert.',
+    resetSucceeded: 'Gespeicherte Daten gelöscht. Der Verlauf ist leer, die Sprache ist Englisch und das Design folgt dem System.',
+    resetFailed: 'Gespeicherte Daten konnten nicht gelöscht werden. Die bisherigen Daten wurden beibehalten.',
+    resetRollbackFailed: 'Das Löschen ist fehlgeschlagen und die bisherigen Daten konnten nicht vollständig wiederhergestellt werden. Einige gespeicherte Daten fehlen möglicherweise. Stelle eine Sicherung wieder her, falls vorhanden.'
+  },
+  it: {
+    resetStoredData: 'Elimina i dati salvati',
+    resetConfirm: 'Eliminare tutti i dati salvati di Date Lotto Generator?\n\nVerranno eliminati:\n• Combinazioni salvate / Cronologia\n• Preferenza della lingua\n• Preferenza del tema\n\nQuesta operazione non può essere annullata senza un backup già disponibile. I dati attualmente inseriti nel generatore e la combinazione non salvata rimarranno invariati.',
+    resetSucceeded: 'Dati salvati eliminati. La cronologia è vuota, la lingua è inglese e il tema segue il sistema.',
+    resetFailed: 'Impossibile eliminare i dati salvati. I dati precedenti sono stati conservati.',
+    resetRollbackFailed: 'Eliminazione non riuscita e impossibile ripristinare completamente i dati precedenti. Alcuni dati salvati potrebbero mancare. Ripristina un backup, se disponibile.'
+  },
+  es: {
+    resetStoredData: 'Eliminar datos guardados',
+    resetConfirm: '¿Eliminar todos los datos guardados de Date Lotto Generator?\n\nSe eliminarán:\n• Combinaciones guardadas / Historial\n• Preferencia de idioma\n• Preferencia de tema\n\nEsta acción no se puede deshacer a menos que ya tengas una copia de seguridad. Los datos actuales del generador y la combinación sin guardar permanecerán sin cambios.',
+    resetSucceeded: 'Datos guardados eliminados. El historial está vacío, el idioma es inglés y el tema sigue al sistema.',
+    resetFailed: 'No se pudieron eliminar los datos guardados. Se conservaron los datos anteriores.',
+    resetRollbackFailed: 'La eliminación falló y no se pudieron recuperar todos los datos anteriores. Es posible que falten algunos datos guardados. Restaura una copia de seguridad si dispones de ella.'
+  }
+};
+for (const language of Object.keys(RESET_T)) Object.assign(INFO_T[language], RESET_T[language]);

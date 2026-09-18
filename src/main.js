@@ -5,7 +5,7 @@ import { createLiveStatus } from './js/accessibility.js';
 import { createClipboardHandlers } from './js/clipboard.js';
 import { createInfoModalHandlers } from './js/info-modal.js';
 import { applyTheme, selectTheme } from './js/theme.js';
-import { createBackupHandlers } from './js/backup.js';
+import { createBackupHandlers, createResetHandler } from './js/backup.js';
 import { toggleFullscreen } from './js/fullscreen.js';
 import { presets } from './data/presets.js';
 import { T } from './data/translations.js';
@@ -20,6 +20,7 @@ const { exportBackup, importBackup }=createBackupHandlers({ $, tr: infoTr, onRes
 $('exportBackup').onclick=exportBackup;
 $('importBackup').onclick=()=>{$('backupFile').value='';$('backupFile').click()};
 $('backupFile').onchange=importBackup;
+$('resetStoredData').onclick=createResetHandler({ $, tr:infoTr, announce, onReset(){$('language').value='en';applyTheme();applyLanguage(false)} });
 function tr(k){return (T[$('language').value]||T.en)[k]||T.en[k]||k}
 function renderPresets(){ const wrap=$('presets'); wrap.innerHTML=''; presets.forEach(p=>{const b=document.createElement('button');b.className='chip'+(p.id===currentPreset?' active':'');b.setAttribute('aria-pressed',String(p.id===currentPreset));b.textContent=p.id==='custom'?tr('custom'):p.label;b.onclick=()=>selectPreset(p.id);wrap.appendChild(b)}) }
 function selectPreset(id){currentPreset=id; const p=presets.find(x=>x.id===id); if(id!=='custom'){ $('mainCount').value=p.m;$('extraCount').value=p.e;$('mainMax').value=p.mm;$('extraMax').value=p.em } renderPresets()}

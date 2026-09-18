@@ -74,6 +74,29 @@ export function getLanguage() {
 }
 export function setLanguage(language) { return writeItem('lottoLang', language); }
 
+// Snapshot raw values so rollback preserves even empty or malformed stored data.
+export function resetStoredData() {
+  const keys = ['lottoHistory', 'lottoLang', 'lottoTheme'];
+  const previous = [];
+  let removed = 0;
+  try {
+    for (const key of keys) previous.push(localStorage.getItem(key));
+    for (const key of keys) {
+      localStorage.removeItem(key);
+      removed++;
+    }
+    return 'resetSucceeded';
+  } catch {
+    let rollbackFailed = false;
+    for (let i = removed - 1; i >= 0; i--) {
+      try {
+        if (previous[i] !== null) localStorage.setItem(keys[i], previous[i]);
+      } catch { rollbackFailed = true; }
+    }
+    return rollbackFailed ? 'resetRollbackFailed' : 'resetFailed';
+  }
+}
+
 // localStorage has no multi-key transaction. Snapshot before writing and roll
 // back only completed writes if a later write fails (including absent keys).
 export function restoreData({ history, language, theme }) {
