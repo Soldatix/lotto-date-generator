@@ -1,4 +1,4 @@
-const HISTORY_LIMIT = 30;
+export const HISTORY_LIMIT = 30;
 
 function readItem(key, fallback) {
   try {
@@ -23,7 +23,7 @@ function validNumbers(numbers, count, max) {
     new Set(numbers).size === count;
 }
 
-function validHistoryEntry(r) {
+export function validHistoryEntry(r) {
   if (!r || typeof r !== 'object' || Array.isArray(r)) return false;
   return typeof r.date === 'string' &&
     /^(?:\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})$/.test(r.date) &&
@@ -73,3 +73,28 @@ export function getLanguage() {
   return ['en', 'hr', 'de', 'it', 'es'].includes(language) ? language : 'en';
 }
 export function setLanguage(language) { return writeItem('lottoLang', language); }
+
+// localStorage has no multi-key transaction. Snapshot before writing and roll
+// back only completed writes if a later write fails (including absent keys).
+export function restoreData({ history, language, theme }) {
+  const entries = [['lottoHistory', JSON.stringify(history)], ['lottoLang', language], ['lottoTheme', theme]];
+  const previous = [];
+  let written = 0;
+  try {
+    for (const [key] of entries) previous.push(localStorage.getItem(key));
+    for (const [key, value] of entries) {
+      localStorage.setItem(key, value);
+      written++;
+    }
+    return 'restored';
+  } catch {
+    let rollbackFailed = false;
+    for (let i = written - 1; i >= 0; i--) {
+      try {
+        if (previous[i] === null) localStorage.removeItem(entries[i][0]);
+        else localStorage.setItem(entries[i][0], previous[i]);
+      } catch { rollbackFailed = true; }
+    }
+    return rollbackFailed ? 'rollbackFailed' : 'restoreFailed';
+  }
+}

@@ -13,3 +13,67 @@ export const INFO_T={
  de:{about:"Über die App",description:"Erzeuge reproduzierbare Lotto-Kombinationen aus einem Datum, Einstellungen und einem optionalen persönlichen Schlüssel.",features:"Hauptfunktionen",featureList:"Lotto-Vorlagen und eigene Zahlenbereiche; Kombinationen kopieren; Verlauf speichern und löschen; helles, dunkles und Systemdesign; fünf Sprachen.",version:"Version",free:"Kostenlose Anwendung",privacy:"Datenschutz & lokale Speicherung",localData:"Deine App-Daten bleiben lokal in deinem Browser. Die App verwendet localStorage, um Folgendes zu speichern:",historyData:"Verlauf: gespeicherte Kombinationen einschließlich Datum, Einstellungen, Zahlen und persönlichem Schlüssel.",themeData:"Design: deine Auswahl für helles, dunkles oder Systemdesign.",languageData:"Sprache: deine ausgewählte Sprache der Benutzeroberfläche.",personalKey:"Wenn du auf Speichern klickst, wird der für diese Kombination verwendete persönliche Schlüssel (Personal Key) zusammen mit ihr in localStorage gespeichert. Der persönliche Schlüssel ist kein Passwort und kein Sicherheitsgeheimnis.",brandText:"Eine Anwendung von Apps & Games.",visit:"Apps & Games besuchen ↗",support:"Unterstützung / Spenden",title:'Informationen / Spenden',subtitle:'Unterstütze wohltätige Zwecke und kostenlose Software',charity:'Wohltätiger Zweck',p1:"Spenden sind freiwillig. Die Anwendung ist und bleibt kostenlos, unabhängig davon, ob du spendest.",p2:'Ein Teil der erhaltenen Spenden wird an verschiedene gemeinnützige Organisationen weitergeleitet; der größte Teil wird an Einrichtungen gespendet, die Kinder ohne angemessene elterliche Betreuung unterstützen.',direct:'Direkte Online-Zahlungen',paypal:'Mit PayPal spenden ↗',stripe:'Mit Stripe spenden ↗',paypalDesc:'Sicher mit PayPal oder weiteren von PayPal Checkout angebotenen Zahlungsmethoden bezahlen.',stripeDesc:'Sicher per Karte oder mit den über Stripe Checkout verfügbaren Zahlungsmethoden bezahlen.',cards:'Debit- / Kreditkarte',digitalWallets:'Digitale Wallets',availability:'Verfügbare Zahlungsmethoden können je nach Land, Gerät und Zahlungsanbieter variieren.',crypto:'Krypto-Wallets',copy:'Kopieren',copied:'Kopiert!',copyFailed:'Kopieren fehlgeschlagen',close:'Schließen',note:'Bitte prüfe die Wallet-Adresse vor dem Senden. Krypto-Transaktionen können nicht rückgängig gemacht werden.'},
  es:{about:"Acerca de la aplicación",description:"Genera combinaciones de lotería repetibles a partir de una fecha, la configuración y una clave personal opcional.",features:"Funciones principales",featureList:"Formatos de lotería predefinidos y rangos personalizados; copiar combinaciones; guardar y eliminar el historial; tema claro, oscuro y del sistema; cinco idiomas.",version:"Versión",free:"Aplicación gratuita",privacy:"Privacidad y almacenamiento local",localData:"Los datos de la aplicación permanecen localmente en tu navegador. La aplicación usa localStorage para recordar:",historyData:"Historial: las combinaciones guardadas, incluidos la fecha, la configuración, los números y la clave personal.",themeData:"Tema: tu preferencia de tema claro, oscuro o del sistema.",languageData:"Idioma: el idioma seleccionado para la interfaz.",personalKey:"Al hacer clic en Guardar, la clave personal (Personal Key) usada para generar esa combinación se guarda junto con ella en localStorage. La clave personal no es una contraseña ni un secreto de seguridad.",brandText:"Una aplicación de Apps & Games.",visit:"Visita Apps & Games ↗",support:"Soporte / Donaciones",title:'Información / Donaciones',subtitle:'Apoya causas benéficas y software gratuito',charity:'Finalidad benéfica',p1:"Las donaciones son voluntarias. La aplicación es gratuita y seguirá siendo gratuita, dones o no.",p2:'Una parte de las donaciones recibidas se destinará a diversas organizaciones benéficas; la mayor parte se donará a instituciones que atienden a niños sin una atención parental adecuada.',direct:'Pagos online directos',paypal:'Donar con PayPal ↗',stripe:'Donar con Stripe ↗',paypalDesc:'Paga de forma segura con PayPal u otros métodos disponibles mediante PayPal Checkout.',stripeDesc:'Paga de forma segura con tarjeta o con los métodos disponibles mediante Stripe Checkout.',cards:'Tarjeta de débito / crédito',digitalWallets:'Carteras digitales',availability:'Los métodos de pago disponibles pueden variar según el país, el dispositivo y el proveedor de pago.',crypto:'Monederos cripto',copy:'Copiar',copied:'¡Copiado!',copyFailed:'Error al copiar',close:'Cerrar',note:'Verifica la dirección del monedero antes de enviar una transacción. Las transferencias cripto no se pueden revertir.'}
 };
+
+const BACKUP_T = {
+  en: {
+    backupTitle: 'Data / Backup',
+    backupDescription: 'Export your saved history, language and theme to JSON, or restore them from a backup. Saved Personal Keys are included.',
+    backupExport: 'Export backup', backupImport: 'Import backup',
+    backupConfirm: 'Restore this backup? This will replace your saved history, language and theme.',
+    backupInvalid: 'Invalid JSON backup. Check the app, backup format version and saved data. Nothing was changed.',
+    backupCancelled: 'Restore cancelled. Nothing was changed.',
+    backupRestored: 'Backup restored.', backupExported: 'Backup download started.',
+    backupExportFailed: 'Could not export the backup.',
+    restoreFailed: 'Could not restore the backup. Existing data was preserved.',
+    rollbackFailed: 'Storage failed and previous data could not be fully restored. Keep your backup and try again.'
+  },
+  hr: {
+    backupTitle: 'Podaci / Sigurnosna kopija',
+    backupDescription: 'Izvezite spremljenu povijest, jezik i temu u JSON ili ih vratite iz sigurnosne kopije. Spremljeni osobni ključevi su uključeni.',
+    backupExport: 'Izvezi sigurnosnu kopiju', backupImport: 'Uvezi sigurnosnu kopiju',
+    backupConfirm: 'Vratiti ovu sigurnosnu kopiju? Zamijenit će se spremljena povijest, jezik i tema.',
+    backupInvalid: 'Neispravna JSON sigurnosna kopija. Provjerite aplikaciju, verziju formata kopije i spremljene podatke. Ništa nije promijenjeno.',
+    backupCancelled: 'Vraćanje je otkazano. Ništa nije promijenjeno.',
+    backupRestored: 'Sigurnosna kopija je vraćena.', backupExported: 'Preuzimanje sigurnosne kopije je pokrenuto.',
+    backupExportFailed: 'Izvoz sigurnosne kopije nije uspio.',
+    restoreFailed: 'Vraćanje sigurnosne kopije nije uspjelo. Postojeći podaci su sačuvani.',
+    rollbackFailed: 'Pohrana nije uspjela i prethodni podaci nisu u cijelosti vraćeni. Sačuvajte sigurnosnu kopiju i pokušajte ponovno.'
+  },
+  de: {
+    backupTitle: 'Daten / Sicherung',
+    backupDescription: 'Exportiere deinen gespeicherten Verlauf, die Sprache und das Design als JSON oder stelle sie aus einer Sicherung wieder her. Gespeicherte persönliche Schlüssel sind enthalten.',
+    backupExport: 'Sicherung exportieren', backupImport: 'Sicherung importieren',
+    backupConfirm: 'Diese Sicherung wiederherstellen? Dein gespeicherter Verlauf, die Sprache und das Design werden ersetzt.',
+    backupInvalid: 'Ungültige JSON-Sicherung. Prüfe die App, die Version des Sicherungsformats und die gespeicherten Daten. Es wurde nichts geändert.',
+    backupCancelled: 'Wiederherstellung abgebrochen. Es wurde nichts geändert.',
+    backupRestored: 'Sicherung wiederhergestellt.', backupExported: 'Download der Sicherung gestartet.',
+    backupExportFailed: 'Die Sicherung konnte nicht exportiert werden.',
+    restoreFailed: 'Die Sicherung konnte nicht wiederhergestellt werden. Die bisherigen Daten wurden beibehalten.',
+    rollbackFailed: 'Speicherfehler: Die bisherigen Daten konnten nicht vollständig wiederhergestellt werden. Bewahre deine Sicherung auf und versuche es erneut.'
+  },
+  it: {
+    backupTitle: 'Dati / Backup',
+    backupDescription: 'Esporta cronologia salvata, lingua e tema in JSON o ripristinali da un backup. Le chiavi personali salvate sono incluse.',
+    backupExport: 'Esporta backup', backupImport: 'Importa backup',
+    backupConfirm: 'Ripristinare questo backup? La cronologia salvata, la lingua e il tema verranno sostituiti.',
+    backupInvalid: 'Backup JSON non valido. Controlla applicazione, versione del formato del backup e dati salvati. Nessuna modifica effettuata.',
+    backupCancelled: 'Ripristino annullato. Nessuna modifica effettuata.',
+    backupRestored: 'Backup ripristinato.', backupExported: 'Download del backup avviato.',
+    backupExportFailed: 'Impossibile esportare il backup.',
+    restoreFailed: 'Impossibile ripristinare il backup. I dati esistenti sono stati conservati.',
+    rollbackFailed: 'Errore di archiviazione: impossibile ripristinare completamente i dati precedenti. Conserva il backup e riprova.'
+  },
+  es: {
+    backupTitle: 'Datos / Copia de seguridad',
+    backupDescription: 'Exporta el historial guardado, el idioma y el tema a JSON o restáuralos desde una copia de seguridad. Se incluyen las claves personales guardadas.',
+    backupExport: 'Exportar copia de seguridad', backupImport: 'Importar copia de seguridad',
+    backupConfirm: '¿Restaurar esta copia de seguridad? Se sustituirán el historial guardado, el idioma y el tema.',
+    backupInvalid: 'Copia de seguridad JSON no válida. Comprueba la aplicación, la versión del formato y los datos guardados. No se ha cambiado nada.',
+    backupCancelled: 'Restauración cancelada. No se ha cambiado nada.',
+    backupRestored: 'Copia de seguridad restaurada.', backupExported: 'Descarga de la copia de seguridad iniciada.',
+    backupExportFailed: 'No se pudo exportar la copia de seguridad.',
+    restoreFailed: 'No se pudo restaurar la copia de seguridad. Se conservaron los datos existentes.',
+    rollbackFailed: 'Error de almacenamiento: no se pudieron recuperar todos los datos anteriores. Conserva la copia de seguridad e inténtalo de nuevo.'
+  }
+};
+for (const language of Object.keys(BACKUP_T)) Object.assign(INFO_T[language], BACKUP_T[language]);

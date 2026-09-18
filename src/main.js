@@ -5,6 +5,7 @@ import { createLiveStatus } from './js/accessibility.js';
 import { createClipboardHandlers } from './js/clipboard.js';
 import { createInfoModalHandlers } from './js/info-modal.js';
 import { applyTheme, selectTheme } from './js/theme.js';
+import { createBackupHandlers } from './js/backup.js';
 import { toggleFullscreen } from './js/fullscreen.js';
 import { presets } from './data/presets.js';
 import { T } from './data/translations.js';
@@ -15,6 +16,10 @@ $('infoVersion').textContent=version;
 const announce=createLiveStatus({ $ });
 const { infoTr, applyInfoLanguage, openInfo, closeInfo, handleInfoOverlayClick, handleInfoKeydown }=createInfoModalHandlers({ $ });
 const { copyResult, copyHistory, copyWallet }=createClipboardHandlers({ $, getLastResult:()=>lastResult, resultString, tr, infoTr, announce });
+const { exportBackup, importBackup }=createBackupHandlers({ $, tr: infoTr, onRestore(data){$('language').value=data.language;applyTheme();applyLanguage(false)} });
+$('exportBackup').onclick=exportBackup;
+$('importBackup').onclick=()=>{$('backupFile').value='';$('backupFile').click()};
+$('backupFile').onchange=importBackup;
 function tr(k){return (T[$('language').value]||T.en)[k]||T.en[k]||k}
 function renderPresets(){ const wrap=$('presets'); wrap.innerHTML=''; presets.forEach(p=>{const b=document.createElement('button');b.className='chip'+(p.id===currentPreset?' active':'');b.setAttribute('aria-pressed',String(p.id===currentPreset));b.textContent=p.id==='custom'?tr('custom'):p.label;b.onclick=()=>selectPreset(p.id);wrap.appendChild(b)}) }
 function selectPreset(id){currentPreset=id; const p=presets.find(x=>x.id===id); if(id!=='custom'){ $('mainCount').value=p.m;$('extraCount').value=p.e;$('mainMax').value=p.mm;$('extraMax').value=p.em } renderPresets()}
@@ -24,7 +29,7 @@ function resultString(r){return `${displayDate(r.date)} • ${r.m}${r.e?`+${r.e}
 function renderResult(){const r=lastResult;if(!r)return;const balls=r.main.map(n=>`<div class="ball">${n}</div>`).join('');const extra=r.extra.length?`<div class="plus">+</div>${r.extra.map(n=>`<div class="ball extra">${n}</div>`).join('')}`:'';$('resultArea').className='';$('resultArea').innerHTML=`<div class="drawMeta"><span>${displayDate(r.date)}</span><span>${r.m}${r.e?`+${r.e}`:''} • 1–${r.mm}${r.e?` / 1–${r.em}`:''}</span></div><div class="balls">${balls}${extra}</div><div class="resultText" id="resultText">${resultString(r)}</div><div class="actions"><button class="btn secondary" id="copyBtn">${tr('copy')}</button><button class="btn secondary" id="saveBtn">${tr('save')}</button></div>`;$('copyBtn').onclick=copyResult;$('saveBtn').onclick=saveResult}
 function saveResult(){if(!lastResult)return;const saved=addHistory(lastResult);$('saveBtn').textContent=tr(saved?'saved':'save');announce(tr(saved?'saved':'saveFailed'));renderHistory()}
 function renderHistory(){const h=getHistory();$('historyWrap').hidden=!h.length;const w=$('historyList');w.innerHTML='';h.forEach((r,i)=>{const row=document.createElement('div');row.className='histItem';row.innerHTML=`<div class="histText" title="${resultString(r)}">${resultString(r)}</div><div><button class="btn mini" data-copy="${i}">${tr('copy')}</button> <button class="btn mini" data-del="${i}">${tr('delete')}</button></div>`;w.appendChild(row)});w.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyHistory(h[+b.dataset.copy],b));w.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{deleteHistory(h,+b.dataset.del);renderHistory()})}
-function applyLanguage(){announce.clear();document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));document.querySelectorAll('[data-i18n-name]').forEach(el=>{const name=tr(el.dataset.i18nName);el.setAttribute('aria-label',name);el.title=name});renderPresets();if(lastResult)renderResult();renderHistory();applyInfoLanguage();setLanguage($('language').value)}
+function applyLanguage(persist=true){announce.clear();document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));document.querySelectorAll('[data-i18n-name]').forEach(el=>{const name=tr(el.dataset.i18nName);el.setAttribute('aria-label',name);el.title=name});renderPresets();if(lastResult)renderResult();renderHistory();applyInfoLanguage();if(persist)setLanguage($('language').value)}
 function reset(){announce.clear();selectPreset('6');$('salt').value='';$('dateInput').value='';lastResult=null;$('resultArea').className='empty';$('resultArea').innerHTML=`<div class="big">🎱</div><p>${tr('empty')}</p>`}
 
 $('infoBtn').onclick=openInfo;$('infoX').onclick=closeInfo;$('infoClose').onclick=closeInfo;$('infoOverlay').addEventListener('click',handleInfoOverlayClick);document.addEventListener('keydown',handleInfoKeydown);document.querySelectorAll('.copy-wallet').forEach(b=>b.onclick=()=>copyWallet(b));

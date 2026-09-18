@@ -125,6 +125,16 @@
         </ul>
         <p data-info-i18n="personalKey">When you click Save, the Personal Key used to generate that combination is saved with it in localStorage. The Personal Key is not a password or a security secret.</p>
       </div>
+      <section class="info-box" aria-labelledby="backupTitle">
+        <h3 id="backupTitle" class="info-kicker" data-info-i18n="backupTitle">Data / Backup</h3>
+        <p data-info-i18n="backupDescription">Export your saved history, language and theme to JSON, or restore them from a backup. Saved Personal Keys are included.</p>
+        <div class="actions">
+          <button type="button" class="btn secondary" id="exportBackup" data-info-i18n="backupExport">Export backup</button>
+          <button type="button" class="btn secondary" id="importBackup" aria-controls="backupFile" data-info-i18n="backupImport">Import backup</button>
+        </div>
+        <input type="file" id="backupFile" accept=".json,application/json" hidden aria-labelledby="importBackup">
+        <p id="backupStatus" class="hint" role="status" aria-live="polite" aria-atomic="true"></p>
+      </section>
       <h3 class="info-section-title" data-info-i18n="support">Support / Donations</h3>
       <div class="info-box">
         <div class="info-kicker" data-info-i18n="charity">Charity purpose</div>
