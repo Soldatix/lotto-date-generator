@@ -367,10 +367,13 @@ for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
       assert.ok(keys.includes(key), key);
     }
     const nodes = keys.map(key => ({ dataset: { infoI18n: key }, textContent: '' }));
-    const context = vm.createContext({ INFO_T, $: () => ({ value: lang }), document: {
+    const close = { setAttribute(key, value) { this[key] = value; } };
+    const context = vm.createContext({ INFO_T, $: id => id === 'infoX' ? close : ({ value: lang }), document: {
       querySelectorAll: selector => selector === '[data-info-i18n]' ? nodes : []
     } });
     vm.runInContext(read('src/js/info-modal.js').replace(/^import .*\r?\n/, '').replace('export function', 'function') + '\ncreateInfoModalHandlers({ $ }).applyInfoLanguage();', context);
+    assert.equal(close['aria-label'], INFO_T[lang].close);
+    assert.equal(close.title, INFO_T[lang].close);
     for (const node of nodes) {
       const key = node.dataset.infoI18n;
       assert.ok(Object.hasOwn(INFO_T[lang], key), key);

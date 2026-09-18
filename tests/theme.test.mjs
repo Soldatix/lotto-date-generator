@@ -92,7 +92,7 @@ test('native theme select translates its visible options, accessible name and ti
   const select = f.$('themeSelect');
   select.dataset = { i18nName: 'themeLabel' };
   select.setAttribute = (key, value) => { select[key] = value; };
-  f.context.document.querySelectorAll = selector => selector === '[data-i18n]' ? options : [select];
+  f.context.document.querySelectorAll = selector => selector === '[data-i18n]' ? options : selector === '[data-i18n-name]' ? [select] : [];
   Object.assign(f.context, { announce: { clear() {} }, lastResult: null,
     renderPresets() {}, renderHistory() {}, applyInfoLanguage() {} });
   for (const name of ['tr', 'applyLanguage']) vm.runInContext(main.split('\n').find(line => line.startsWith(`function ${name}(`)), f.context);

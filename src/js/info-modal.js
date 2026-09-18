@@ -3,7 +3,7 @@ import { INFO_T } from '../data/translations.js';
 export function createInfoModalHandlers({ $ }){
   let previousFocus = null;
   function infoTr(k){const lang=$('language')?.value||'en';return (INFO_T[lang]||INFO_T.en)[k]||INFO_T.en[k]||k}
-  function applyInfoLanguage(){document.querySelectorAll('[data-info-i18n]').forEach(el=>el.textContent=infoTr(el.dataset.infoI18n));document.querySelectorAll('.copy-wallet').forEach(b=>{if(!b.dataset.copied)b.textContent=infoTr('copy')})}
+  function applyInfoLanguage(){$('infoX').setAttribute('aria-label',infoTr('close'));$('infoX').title=infoTr('close');document.querySelectorAll('[data-info-i18n]').forEach(el=>el.textContent=infoTr(el.dataset.infoI18n));document.querySelectorAll('.copy-wallet').forEach(b=>{if(!b.dataset.copied)b.textContent=infoTr('copy')})}
   function openInfo(){
     const o=$('infoOverlay');
     if(!o.classList.contains('open'))previousFocus=document.activeElement;

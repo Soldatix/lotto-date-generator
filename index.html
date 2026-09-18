@@ -81,7 +81,7 @@
         <div class="field"><label for="mainMax" data-i18n="mainMax">Main number range (1–N)</label><input id="mainMax" type="number" min="1" max="99" value="49"></div>
         <div class="field"><label for="extraCount" data-i18n="extraCount">Extra numbers count</label><input id="extraCount" type="number" min="0" max="10" value="0"></div>
         <div class="field"><label for="extraMax" data-i18n="extraMax">Extra number range (1–N)</label><input id="extraMax" type="number" min="1" max="99" value="12"></div>
-        <div class="field full"><label for="salt" data-i18n="salt">Optional personal key</label><input id="salt" type="text" maxlength="40" placeholder="e.g. name, city, lucky word"></div>
+        <div class="field full"><label for="salt" data-i18n="salt">Optional personal key</label><input id="salt" type="text" maxlength="40" data-i18n-placeholder="saltPlaceholder" placeholder="e.g. name, city, lucky word"></div>
       </div>
       <div class="actions"><button class="btn primary" id="generateBtn" data-i18n="generate">Generate numbers</button><button class="btn secondary" id="resetBtn" data-i18n="reset">Reset</button></div>
       <div class="hint" data-i18n="hint">The same date + settings + personal key always produces the same combination.</div>
@@ -94,7 +94,7 @@
       <div class="history" id="historyWrap" hidden><h2 data-i18n="history">Saved combinations</h2><div class="historyList" id="historyList"></div></div>
     </section>
   </div>
-  <div class="footer">Date Lotto Generator • Standalone HTML • Local settings & history</div>
+  <div class="footer" data-i18n="footer">Apps &amp; Games • Local data • Free to use</div>
 </div>
 
 
@@ -106,7 +106,7 @@
         <h2 class="info-title" id="infoTitle" data-info-i18n="title">Information / Donations</h2>
         <div class="info-sub" data-info-i18n="subtitle">Support charity & open-source software</div>
       </div>
-      <button class="info-x" id="infoX" aria-label="Close">×</button>
+      <button class="info-x" id="infoX" aria-label="Close" title="Close">×</button>
     </header>
     <div id="infoLiveStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="info-body">
