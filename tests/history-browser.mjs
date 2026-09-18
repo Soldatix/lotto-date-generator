@@ -3,6 +3,14 @@ import assert from 'node:assert/strict';
 import { pathToFileURL } from 'node:url';
 import { createServer } from 'vite';
 
+const deleteFailures = {
+  en: 'Could not delete the saved combination.',
+  hr: 'Spremljena kombinacija nije mogla biti obrisana.',
+  de: 'Die gespeicherte Kombination konnte nicht gelöscht werden.',
+  it: 'Impossibile eliminare la combinazione salvata.',
+  es: 'No se pudo eliminar la combinación guardada.'
+};
+
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE
   ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : 'playwright');
 const server = await createServer({ server: { host: '127.0.0.1', port: 0 } });
@@ -61,10 +69,46 @@ try {
       const expected = await page.locator('.histText').first().textContent();
       await page.locator('[data-copy="0"]').click();
       assert.equal(await page.evaluate(() => navigator.clipboard.readText()), expected);
-      await page.locator('[data-del="0"]').click();
+      await page.locator('[data-del="0"]').focus();
+      await page.locator('[data-del="0"]').press('Enter');
       assert.equal(await page.locator('.histItem').count(), 2);
-      console.log(`PASS ${width}px ${language}: 1/2/3 entries, long key + 20+10 result, full text, Copy/Delete; scrollWidth=clientWidth=${width}`);
+      console.log(`PASS ${width}px ${language}: 1/2/3 entries, long key + 20+10 result, full text, Copy/keyboard Delete; scrollWidth=clientWidth=${width}`);
     }
+  }
+  for (const [language, failure] of Object.entries(deleteFailures)) {
+    await page.goto(server.resolvedUrls.local[0]);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    await page.selectOption('#language', language);
+    await page.fill('#dateInput', '18092026');
+    await page.click('#generateBtn');
+    await page.click('#saveBtn');
+    const persisted = await page.evaluate(() => localStorage.getItem('lottoHistory'));
+    await page.evaluate(() => {
+      const setItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (key, value) {
+        if (key === 'lottoHistory') throw new DOMException('Full', 'QuotaExceededError');
+        return setItem.call(this, key, value);
+      };
+    });
+    const deleteButton = page.locator('[data-del="0"]');
+    await deleteButton.focus();
+    await deleteButton.press('Space');
+    assert.equal(await page.locator('.histItem').count(), 1);
+    assert.equal(await page.evaluate(() => localStorage.getItem('lottoHistory')), persisted);
+    assert.equal(await page.locator('#liveStatus').textContent(), '');
+    await page.waitForFunction(expected => document.querySelector('#liveStatus').textContent === expected, failure);
+    await page.locator('[data-copy="0"]').click();
+    await page.waitForFunction(expected => document.querySelector('#liveStatus').textContent === expected, {
+      en: 'Copied!', hr: 'Kopirano!', de: 'Kopiert!', it: 'Copiato!', es: '¡Copiado!'
+    }[language]);
+    await page.locator('[data-del="0"]').focus();
+    await page.locator('[data-del="0"]').press('Enter');
+    assert.equal(await page.locator('#liveStatus').textContent(), '');
+    await page.waitForFunction(expected => document.querySelector('#liveStatus').textContent === expected, failure);
+    assert.equal(await page.locator('.histItem').count(), 1);
+    assert.equal(await page.evaluate(() => localStorage.getItem('lottoHistory')), persisted);
+    console.log(`PASS ${language}: QuotaExceededError preserves History and replaces Saved/Copied live status via keyboard Delete`);
   }
   assert.deepEqual(errors, []);
 } finally {

@@ -9,6 +9,7 @@ const generatorSource = readFileSync('src/js/generator.js', 'utf8');
 const generatorUrl = `data:text/javascript;base64,${Buffer.from(generatorSource).toString('base64')}`;
 const storage = await load(readFileSync('src/js/storage.js', 'utf8').replace("'./generator.js'", `'${generatorUrl}'`));
 const generator = await import(generatorUrl);
+const { T } = await load(readFileSync('src/data/translations.js', 'utf8'));
 const valid = { date: '17/09/2026', m: 6, mm: 49, e: 0, em: 12, salt: '',
   main: [1, 2, 3, 4, 5, 6], extra: [], created: '2026-09-17T12:00:00.000Z' };
 let data;
@@ -161,6 +162,17 @@ test('write failures report false and preserve persisted and caller history', ()
     assert.deepEqual(history, [valid]);
     assert.deepEqual(storage.getHistory(), [valid]);
   }
+});
+
+test('History delete failure message is complete and natural in all five languages', () => {
+  assert.deepEqual(Object.fromEntries(Object.entries(T).map(([language, translations]) =>
+    [language, translations.deleteFailed])), {
+    en: 'Could not delete the saved combination.',
+    hr: 'Spremljena kombinacija nije mogla biti obrisana.',
+    it: 'Impossibile eliminare la combinazione salvata.',
+    de: 'Die gespeicherte Kombination konnte nicht gelöscht werden.',
+    es: 'No se pudo eliminar la combinación guardada.'
+  });
 });
 
 test('actual Save/History handlers: corrupt history renders safely; failed save resets Saved', () => {
