@@ -20,7 +20,7 @@ export async function copyText(text) {
   }
 }
 
-export function createClipboardHandlers({ $, getLastResult, resultString, tr, infoTr }) {
+export function createClipboardHandlers({ $, getLastResult, resultString, tr, infoTr, announce = () => {} }) {
   const attempts = new WeakMap();
 
   async function copyWithFeedback(text, button, translate, delay, wallet = false) {
@@ -35,6 +35,7 @@ export function createClipboardHandlers({ $, getLastResult, resultString, tr, in
     // A slower earlier request must not overwrite the latest button feedback.
     if (attempts.get(button) !== attempt) return success;
     button.textContent = translate(success ? 'copied' : 'copyFailed');
+    announce(button.textContent, wallet ? 'infoLiveStatus' : 'liveStatus');
     if (wallet && success) button.dataset.copied = '1';
     attempt.timer = setTimeout(() => {
       if (wallet) delete button.dataset.copied;

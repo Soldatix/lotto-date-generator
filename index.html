@@ -57,24 +57,26 @@
   <div class="topbar">
     <div class="brand"><div class="logo">L</div><div><h1 data-i18n="title">Date Lotto Generator</h1><div class="subtitle" data-i18n="subtitle">Generate repeatable lotto combinations from any date.</div></div></div>
     <div class="toolbar">
-      <select id="language" aria-label="Language"><option value="en">English</option><option value="hr">Hrvatski</option><option value="it">Italiano</option><option value="de">Deutsch</option><option value="es">Español</option></select>
-      <button class="iconbtn" id="infoBtn" title="Information / Donations" aria-label="Information / Donations">ⓘ</button>
-      <button class="iconbtn" id="themeBtn" title="Theme">☀︎ / ◐</button>
-      <button class="iconbtn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+      <select id="language" data-i18n-name="languageLabel" title="Language" aria-label="Language"><option value="en">English</option><option value="hr">Hrvatski</option><option value="it">Italiano</option><option value="de">Deutsch</option><option value="es">Español</option></select>
+      <button class="iconbtn" id="infoBtn" data-i18n-name="infoLabel" title="Information / Donations" aria-label="Information / Donations">ⓘ</button>
+      <button class="iconbtn" id="themeBtn" data-i18n-name="themeLabel" title="Toggle light/dark theme" aria-label="Toggle light/dark theme">☀︎ / ◐</button>
+      <button class="iconbtn" id="fullscreenBtn" data-i18n-name="fullscreenLabel" title="Toggle fullscreen" aria-label="Toggle fullscreen">⛶</button>
     </div>
   </div>
 
+  <span id="dateFormat" class="sr-only">dd/mm/yyyy</span>
+  <div id="liveStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   <div class="grid">
     <section class="card">
       <h2 data-i18n="setup">Generator setup</h2>
       <div class="formgrid">
-        <div class="field full"><label data-i18n="date">Date</label><input type="text" id="dateInput" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" autocomplete="off" aria-label="Date in dd/mm/yyyy format"></div>
-        <div class="field full"><label data-i18n="format">Lotto format</label><div class="presetrow" id="presets"></div></div>
-        <div class="field"><label data-i18n="mainCount">Main numbers count</label><input id="mainCount" type="number" min="1" max="20" value="6"></div>
-        <div class="field"><label data-i18n="mainMax">Main number range (1–N)</label><input id="mainMax" type="number" min="1" max="99" value="49"></div>
-        <div class="field"><label data-i18n="extraCount">Extra numbers count</label><input id="extraCount" type="number" min="0" max="10" value="0"></div>
-        <div class="field"><label data-i18n="extraMax">Extra number range (1–N)</label><input id="extraMax" type="number" min="1" max="99" value="12"></div>
-        <div class="field full"><label data-i18n="salt">Optional personal key</label><input id="salt" type="text" maxlength="40" placeholder="e.g. name, city, lucky word"></div>
+        <div class="field full"><label for="dateInput" data-i18n="date">Date</label><input type="text" id="dateInput" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" autocomplete="off" aria-describedby="dateFormat"></div>
+        <div class="field full"><span class="field-label" id="formatLabel" data-i18n="format">Lotto format</span><div class="presetrow" id="presets" role="group" aria-labelledby="formatLabel"></div></div>
+        <div class="field"><label for="mainCount" data-i18n="mainCount">Main numbers count</label><input id="mainCount" type="number" min="1" max="20" value="6"></div>
+        <div class="field"><label for="mainMax" data-i18n="mainMax">Main number range (1–N)</label><input id="mainMax" type="number" min="1" max="99" value="49"></div>
+        <div class="field"><label for="extraCount" data-i18n="extraCount">Extra numbers count</label><input id="extraCount" type="number" min="0" max="10" value="0"></div>
+        <div class="field"><label for="extraMax" data-i18n="extraMax">Extra number range (1–N)</label><input id="extraMax" type="number" min="1" max="99" value="12"></div>
+        <div class="field full"><label for="salt" data-i18n="salt">Optional personal key</label><input id="salt" type="text" maxlength="40" placeholder="e.g. name, city, lucky word"></div>
       </div>
       <div class="actions"><button class="btn primary" id="generateBtn" data-i18n="generate">Generate numbers</button><button class="btn secondary" id="resetBtn" data-i18n="reset">Reset</button></div>
       <div class="hint" data-i18n="hint">The same date + settings + personal key always produces the same combination.</div>
@@ -101,6 +103,7 @@
       </div>
       <button class="info-x" id="infoX" aria-label="Close">×</button>
     </header>
+    <div id="infoLiveStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="info-body">
       <div class="info-box">
         <div class="info-kicker" data-info-i18n="charity">Charity purpose</div>

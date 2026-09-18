@@ -74,7 +74,7 @@ test('actual language initialization and change handler restore and persist the 
   const source = readFileSync('src/main.js', 'utf8');
   const lines = source.split('\n');
   const elements = new Map();
-  const context = vm.createContext({ ...storage, lastResult: null,
+  const context = vm.createContext({ ...storage, lastResult: null, announce: { clear() {} },
     $: id => { if (!elements.has(id)) elements.set(id, { value: '' }); return elements.get(id); },
     document: { documentElement: {}, querySelectorAll: () => [] },
     applyTheme() {}, renderPresets() {}, renderHistory() {}, applyInfoLanguage() {},
@@ -145,7 +145,8 @@ test('actual Save/History handlers: corrupt history renders safely; failed save 
   const elements = new Map();
   const element = () => ({ textContent: '', innerHTML: '', rows: [],
     appendChild(row) { this.rows.push(row); }, querySelectorAll() { return []; } });
-  const context = vm.createContext({ ...storage, displayDate: generator.displayDate,
+  const announcements = [];
+  const context = vm.createContext({ announce: message => announcements.push(message), ...storage, displayDate: generator.displayDate,
     lastResult: valid, tr: key => key,
     $: id => { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); },
     document: { createElement: element } });
@@ -160,11 +161,13 @@ test('actual Save/History handlers: corrupt history renders safely; failed save 
   reset();
   vm.runInContext('saveResult()', context);
   assert.equal(elements.get('saveBtn').textContent, 'saved');
+  assert.deepEqual(announcements, ['saved']);
   assert.equal(elements.get('historyWrap').hidden, false);
   assert.match(elements.get('historyList').rows[0].innerHTML, /1, 2, 3, 4, 5, 6/);
   localStorage.setItem = () => { throw new DOMException('Full', 'QuotaExceededError'); };
   vm.runInContext('saveResult()', context);
   assert.equal(elements.get('saveBtn').textContent, 'save');
+  assert.deepEqual(announcements, ['saved', 'saveFailed']);
   assert.deepEqual(storage.getHistory(), [valid]);
 });
 

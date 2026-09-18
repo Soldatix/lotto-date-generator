@@ -21,6 +21,7 @@ function setup(kind, language, api, fallback) {
   const dictionary = kind === 'wallet' ? INFO_T : T;
   let lang = language;
   const writes = [];
+  const announcements = [];
   const button = { dataset: { wallet: 'wallet-address' },
     get textContent() { return writes.at(-1); },
     set textContent(value) { writes.push(value); } };
@@ -51,10 +52,11 @@ function setup(kind, language, api, fallback) {
   const result = { text: '17/09/2026 • 6 • 1, 2, 3, 4, 5, 6' };
   const handlers = context.createClipboardHandlers({ $: () => button,
     getLastResult: () => result, resultString: r => r.text,
+    announce: (text, region) => announcements.push({ text, region }),
     tr: key => T[lang][key], infoTr: key => INFO_T[lang][key] });
   const invoke = () => kind === 'current' ? handlers.copyResult()
     : kind === 'history' ? handlers.copyHistory(result, button) : handlers.copyWallet(button);
-  return { button, writes, calls, timers, context, invoke, dictionary,
+  return { button, writes, announcements, calls, timers, context, invoke, dictionary,
     expectedText: kind === 'wallet' ? button.dataset.wallet : result.text,
     setLanguage(value) { lang = value; },
     expire() { const pending = [...timers.values()]; timers.clear(); pending.forEach(t => t.callback()); } };
@@ -73,6 +75,7 @@ for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
         const h = setup(kind, lang, api, fallback);
         assert.equal(await h.invoke(), expected);
         const labels = h.dictionary[lang];
+        assert.deepEqual(h.announcements, [{ text: expected ? labels.copied : labels.copyFailed, region: kind === 'wallet' ? 'infoLiveStatus' : 'liveStatus' }]);
         assert.equal(h.button.textContent, expected ? labels.copied : labels.copyFailed);
         if (!expected) assert.ok(!h.writes.includes(labels.copied), 'never display false success');
         assert.equal(h.button.dataset.copied, kind === 'wallet' && expected ? '1' : undefined);
@@ -86,6 +89,7 @@ for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
         assert.equal([...h.timers.values()][0].delay, kind === 'history' ? 900 : 1200);
         h.expire();
         assert.equal(h.button.textContent, labels.copy);
+        assert.equal(h.announcements.length, 1, 'reset feedback must not announce');
         assert.equal(h.button.dataset.copied, undefined);
       });
     }
@@ -117,6 +121,7 @@ for (const kind of ['current', 'history', 'wallet']) {
     resolve();
     assert.equal(await earlier, true);
     assert.equal(h.button.textContent, T.en.copyFailed);
+    assert.equal(h.announcements.length, 1, 'stale requests must not announce');
     assert.ok(!h.writes.includes(T.en.copied));
     h.expire();
     assert.equal(h.button.textContent, T.en.copy);
