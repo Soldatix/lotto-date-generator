@@ -21,7 +21,7 @@ function fixture(values = initial()) {
     window: { confirm(message) { confirmations.push(message); return context.confirmed; }, matchMedia: () => ({ matches: true, addEventListener() {} }) },
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem(key) { removals.push(key); data.delete(key); } }
   });
-  for (const path of ['src/js/storage.js', 'src/js/generator.js', 'src/js/theme.js', 'src/data/translations.js', 'src/js/backup.js', 'src/js/info-modal.js']) {
+  for (const path of ['src/js/generator.js', 'src/js/storage.js', 'src/js/theme.js', 'src/data/translations.js', 'src/js/backup.js', 'src/js/info-modal.js']) {
     vm.runInContext(read(path).replace(/^import .*\r?\n/gm, '').replaceAll('export ', ''), context);
   }
   vm.runInContext('var { infoTr, applyInfoLanguage } = createInfoModalHandlers({ $ });', context);

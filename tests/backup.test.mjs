@@ -29,7 +29,7 @@ function fixture(initial = [['lottoHistory', '[]'], ['lottoLang', 'en'], ['lotto
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) },
     confirmed: true, announce: { clear() {} }, lastResult: null,
     renderPresets() {}, applyInfoLanguage() {} });
-  for (const path of ['src/js/storage.js', 'src/js/generator.js', 'src/js/theme.js', 'src/data/translations.js', 'src/js/backup.js']) {
+  for (const path of ['src/js/generator.js', 'src/js/storage.js', 'src/js/theme.js', 'src/data/translations.js', 'src/js/backup.js']) {
     vm.runInContext(read(path).replace(/^import .*\r?\n/gm, '').replaceAll('export ', ''), context);
   }
   for (const name of ['tr', 'resultString', 'renderHistory', 'applyLanguage']) {
@@ -95,6 +95,10 @@ const invalid = {
   'unsupported version': b => { b.version = 2; },
   'string version': b => { b.version = '1'; },
   'invalid history entry': b => { b.data.history[0].main = [1, 1]; },
+  'Astra invalid History date': b => { b.data.history[0].date = '31/02/2026'; },
+  'Astra invalid created timestamp': b => { b.data.history[0].created = 'not-a-date'; },
+  'nonexistent date in created timestamp': b => { b.data.history[0].created = '2026-02-30T12:00:00.000Z'; },
+  'wrong created type': b => { b.data.history[0].created = 0; },
   'mixed valid and invalid history': b => { b.data.history.push({}); },
   'history is not array': b => { b.data.history = {}; },
   'over history limit': b => { b.data.history = Array(31).fill(entry); },
@@ -111,6 +115,24 @@ for (const [name, mutate] of Object.entries(invalid)) test(`reject ${name} befor
   const f = fixture(), before = [...f.data], b = backup();
   const text = mutate(b);
   await f.importFile(typeof text === 'string' ? text : JSON.stringify(b));
+  assert.equal(f.status(), 'backupInvalid');
+  assert.deepEqual([...f.data], before);
+  assert.deepEqual(f.calls, []);
+});
+
+test('valid Backup v1 keeps both legacy History date formats and real leap dates compatible', async () => {
+  const f = fixture(), b = backup();
+  b.data.history = ['18/09/2026', '2026-09-18', '29/02/2024', '2000-02-29']
+    .map((date, index) => ({ ...structuredClone(entry), date, salt: String(index) }));
+  await f.importFile(JSON.stringify(b));
+  assert.equal(f.status(), 'backupRestored');
+  assert.deepEqual(plain(f.context.getHistory()), b.data.history);
+});
+
+test('one invalid History entry rejects the complete backup before confirmation or storage writes', async () => {
+  const f = fixture(), before = [...f.data], b = backup();
+  b.data.history.push({ ...structuredClone(entry), date: '31/02/2026' });
+  await f.importFile(JSON.stringify(b));
   assert.equal(f.status(), 'backupInvalid');
   assert.deepEqual([...f.data], before);
   assert.deepEqual(f.calls, []);

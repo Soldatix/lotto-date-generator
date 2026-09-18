@@ -15,7 +15,7 @@ function fixture(saved, dark = false, data = new Map(saved === undefined ? [] : 
     window: { matchMedia(query) { assert.equal(query, '(prefers-color-scheme: dark)'); return media; } },
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) },
     generate() {}, reset() {}, applyLanguage() {}, toggleFullscreen() {} });
-  vm.runInContext(read('src/js/storage.js').replaceAll('export ', ''), context);
+  vm.runInContext(read('src/js/storage.js').replace(/^import .*\r?\n/gm, '').replaceAll('export ', ''), context);
   vm.runInContext(read('src/js/theme.js').replace(/^import .*\r?\n/, '').replaceAll('export ', ''), context);
   vm.runInContext(main.split('\n').find(line => line.startsWith("$('generateBtn').onclick=")), context);
   context.applyTheme();

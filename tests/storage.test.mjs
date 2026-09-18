@@ -5,8 +5,10 @@ import vm from 'node:vm';
 import { test } from 'node:test';
 
 const load = source => import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
-const storage = await load(readFileSync('src/js/storage.js', 'utf8'));
-const generator = await load(readFileSync('src/js/generator.js', 'utf8'));
+const generatorSource = readFileSync('src/js/generator.js', 'utf8');
+const generatorUrl = `data:text/javascript;base64,${Buffer.from(generatorSource).toString('base64')}`;
+const storage = await load(readFileSync('src/js/storage.js', 'utf8').replace("'./generator.js'", `'${generatorUrl}'`));
+const generator = await import(generatorUrl);
 const valid = { date: '17/09/2026', m: 6, mm: 49, e: 0, em: 12, salt: '',
   main: [1, 2, 3, 4, 5, 6], extra: [], created: '2026-09-17T12:00:00.000Z' };
 let data;
@@ -43,6 +45,27 @@ test('reject incomplete, nonnumeric, out-of-range and duplicate records', () => 
     { ...valid, extra: {} }, { ...valid, salt: null }, { ...valid, created: null }];
   reset(JSON.stringify([...invalid, valid, ...invalid, valid]));
   assert.deepEqual(storage.getHistory(), [valid, valid]);
+});
+
+test('History date validation accepts both real calendar formats and the supported year range', () => {
+  const accepted = ['29/02/2024', '2024-02-29', '17/09/2026', '2026-09-17',
+    '28/02/1900', '1900-02-28', '29/02/2000', '2000-02-29', '01/01/1000', '9999-12-31'];
+  const rejected = ['29/02/2023', '2023-02-29', '29/02/1900', '1900-02-29',
+    '31/02/2026', '2026-02-30', '31/04/2026', '2026-04-31', '2026-13-01',
+    '00/01/2026', '01/00/2026', '2026-00-01', '2026-01-00', '01/01/0999', '10000-01-01'];
+  for (const date of accepted) assert.equal(storage.validHistoryEntry({ ...valid, date }), true, date);
+  for (const date of rejected) assert.equal(storage.validHistoryEntry({ ...valid, date }), false, date);
+});
+
+test('created validation accepts real ISO timestamps and rejects invalid values without normalization', () => {
+  for (const created of ['2026-09-18T12:00:00.000Z', '2024-02-29T23:59:59Z', '2000-02-29T12:00:00+01:00']) {
+    assert.equal(storage.validHistoryEntry({ ...valid, created }), true, created);
+  }
+  for (const created of ['not-a-date', '', '2026-02-30T12:00:00.000Z', '2023-02-29T12:00:00Z',
+    '2026-13-01T12:00:00Z', '2026-09-18T24:00:00Z', '2026-09-18T12:60:00Z',
+    '2026-09-18', 0, null, {}, []]) {
+    assert.equal(storage.validHistoryEntry({ ...valid, created }), false, String(created));
+  }
 });
 
 test('normal Save/Delete and theme/language round trips', () => {
@@ -173,8 +196,10 @@ test('actual Save/History handlers: corrupt history renders safely; failed save 
 
 test('Lotto regression against branch HEAD: presets, custom boundaries, dates and salts', async () => {
   const baselineSource = execFileSync('git', ['show', 'HEAD:src/js/generator.js'], { encoding: 'utf8' });
-  assert.equal(readFileSync('src/js/generator.js', 'utf8').replace(/\r\n/g, '\n'), baselineSource.replace(/\r\n/g, '\n'));
   const baseline = await load(baselineSource);
+  for (const name of ['hash32', 'mulberry32', 'uniqueNums']) {
+    assert.equal(generator[name].toString(), baseline[name].toString(), `${name} implementation changed`);
+  }
   const { presets } = await load(readFileSync('src/data/presets.js', 'utf8'));
   const configurations = [...presets, { m: 1, mm: 1, e: 0, em: 1 },
     { m: 20, mm: 99, e: 10, em: 99 }, { m: 20, mm: 20, e: 10, em: 10 }];

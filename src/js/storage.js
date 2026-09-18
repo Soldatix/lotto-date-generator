@@ -1,3 +1,5 @@
+import { validHistoryDate, validIsoTimestamp } from './generator.js';
+
 export const HISTORY_LIMIT = 30;
 
 function readItem(key, fallback) {
@@ -25,12 +27,11 @@ function validNumbers(numbers, count, max) {
 
 export function validHistoryEntry(r) {
   if (!r || typeof r !== 'object' || Array.isArray(r)) return false;
-  return typeof r.date === 'string' &&
-    /^(?:\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})$/.test(r.date) &&
+  return validHistoryDate(r.date) &&
     [r.m, r.mm, r.e, r.em].every(Number.isInteger) &&
     r.m >= 1 && r.m <= 20 && r.mm >= r.m && r.mm <= 99 &&
     r.e >= 0 && r.e <= 10 && r.em >= 1 && r.em <= 99 &&
-    r.em >= r.e && typeof r.salt === 'string' && typeof r.created === 'string' &&
+    r.em >= r.e && typeof r.salt === 'string' && validIsoTimestamp(r.created) &&
     validNumbers(r.main, r.m, r.mm) && validNumbers(r.extra, r.e, r.em);
 }
 
