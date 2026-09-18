@@ -11,6 +11,137 @@ const { presets } = await load(read('src/data/presets.js'));
 const generator = await load(read('src/js/generator.js'));
 const main = read('src/main.js');
 const html = read('index.html');
+const { INFO_T } = await load(read('src/data/translations.js'));
+
+function modalFixture() {
+  const document = { body: { style: {} }, listeners: {},
+    addEventListener(type, handler) { this.listeners[type] = handler; } };
+  const element = (attributes = '') => ({
+    dataset: { infoI18n: attributes.match(/data-info-i18n="([^"]+)"/)?.[1] },
+    isConnected: true, tabIndex: 0, disabled: false, visible: true,
+    textContent: '', listeners: {},
+    focus() { if (this.isConnected && !this.disabled && this.visible) document.activeElement = this; },
+    matches() { return this.disabled; },
+    getClientRects() { return this.visible ? [{}] : []; },
+    setAttribute(key, value) { this[key] = value; },
+    addEventListener(type, handler) { this.listeners[type] = handler; }
+  });
+  const markup = html.slice(html.indexOf('<div class="info-overlay"'));
+  const controls = [...markup.matchAll(/<(button|a)\b([^>]*)>/g)].map(([, tag, attributes]) =>
+    Object.assign(element(attributes), { tag, attributes }));
+  const elements = { infoBtn: element(), language: { value: 'en' } };
+  for (const control of controls) {
+    const id = control.attributes.match(/id="([^"]+)"/)?.[1];
+    if (id) elements[id] = control;
+  }
+  const classes = new Set();
+  elements.infoOverlay = Object.assign(element(), {
+    classList: { add: value => classes.add(value), remove: value => classes.delete(value), contains: value => classes.has(value) },
+    querySelectorAll: () => controls
+  });
+  document.querySelectorAll = selector => selector === '.copy-wallet'
+    ? controls.filter(control => control.attributes.includes('copy-wallet'))
+    : controls.filter(control => control.dataset.infoI18n);
+  const context = vm.createContext({ document, INFO_T, $: id => elements[id],
+    getComputedStyle: () => ({ visibility: 'visible' }), copyWallet() {} });
+  vm.runInContext(read('src/js/info-modal.js').replace(/^import .*\r?\n/, '').replace('export function', 'function'), context);
+  vm.runInContext('var { openInfo, closeInfo, applyInfoLanguage, handleInfoKeydown, handleInfoOverlayClick } = createInfoModalHandlers({ $ });', context);
+  vm.runInContext(main.split('\n').find(line => line.startsWith("$('infoBtn').onclick=")), context);
+  elements.infoBtn.focus();
+  const key = (key, shiftKey = false) => {
+    const event = { key, shiftKey, prevented: false, preventDefault() { this.prevented = true; } };
+    document.listeners.keydown(event);
+    return event;
+  };
+  // Model native sequential navigation only when the handler does not intercept Tab.
+  const tab = (shift = false) => {
+    const event = key('Tab', shift);
+    if (!event.prevented) {
+      const next = controls.indexOf(document.activeElement) + (shift ? -1 : 1);
+      (controls[next] || elements.infoBtn).focus();
+    }
+  };
+  return { document, elements, controls, context, key, tab };
+}
+
+test('Info dialog semantics, initial focus and keyboard access to every payment and Copy control', () => {
+  assert.match(html, /role="dialog" aria-modal="true" aria-labelledby="infoTitle"/);
+  assert.match(html, /<h2[^>]*id="infoTitle"/);
+  const f = modalFixture();
+  assert.equal(f.document.activeElement, f.elements.infoBtn);
+  f.elements.infoBtn.onclick();
+  assert.equal(f.document.activeElement, f.elements.infoX);
+  assert.equal(f.elements.infoOverlay['aria-hidden'], 'false');
+  assert.equal(f.document.body.style.overflow, 'hidden');
+  assert.equal(f.controls.filter(c => c.tag === 'a').length, 2);
+  assert.equal(f.controls.filter(c => c.attributes.includes('copy-wallet')).length, 8);
+  const visited = new Set();
+  for (let i = 0; i < f.controls.length * 3; i++) {
+    visited.add(f.document.activeElement);
+    f.tab();
+    assert.ok(f.controls.includes(f.document.activeElement));
+  }
+  assert.equal(visited.size, f.controls.length);
+  f.elements.infoX.focus();
+  f.tab(true);
+  assert.equal(f.document.activeElement, f.elements.infoClose);
+  f.tab();
+  assert.equal(f.document.activeElement, f.elements.infoX);
+});
+
+for (const method of ['X', 'Close', 'Escape', 'overlay']) {
+  test(`Info ${method} closes and restores the opener's focus`, () => {
+    const f = modalFixture();
+    f.elements.infoBtn.onclick();
+    f.context.openInfo(); // Repeated opening must preserve the original focus.
+    if (method === 'X') f.elements.infoX.onclick();
+    if (method === 'Close') f.elements.infoClose.onclick();
+    if (method === 'Escape') f.key('Escape');
+    if (method === 'overlay') f.elements.infoOverlay.listeners.click({ target: f.elements.infoOverlay });
+    assert.equal(f.document.activeElement, f.elements.infoBtn);
+    assert.equal(f.elements.infoOverlay.classList.contains('open'), false);
+    assert.equal(f.elements.infoOverlay['aria-hidden'], 'true');
+    assert.equal(f.document.body.style.overflow, '');
+    assert.equal(f.key('Tab').prevented, false);
+  });
+}
+
+test('Info language changes preserve focus and both trap boundaries in every language', () => {
+  const f = modalFixture();
+  f.context.openInfo();
+  for (const lang of Object.keys(INFO_T)) {
+    f.elements.language.value = lang;
+    f.context.applyInfoLanguage();
+    assert.equal(f.document.activeElement, f.elements.infoX);
+    assert.equal(f.elements.infoClose.textContent, INFO_T[lang].close);
+    f.tab(true);
+    assert.equal(f.document.activeElement, f.elements.infoClose);
+    f.tab();
+    assert.equal(f.document.activeElement, f.elements.infoX);
+  }
+});
+
+test('Info handles unavailable opener, changed controls, outside focus and clicks inside the modal', () => {
+  const f = modalFixture();
+  f.context.openInfo();
+  f.elements.infoOverlay.listeners.click({ target: f.elements.infoX });
+  assert.equal(f.elements.infoOverlay.classList.contains('open'), true);
+  f.elements.infoClose.disabled = true;
+  f.elements.infoX.focus();
+  f.tab(true);
+  assert.equal(f.document.activeElement, f.controls.at(-2));
+  f.controls.at(-2).visible = false;
+  f.elements.infoX.focus();
+  f.tab(true);
+  assert.equal(f.document.activeElement, f.controls.at(-3));
+  f.elements.infoBtn.focus();
+  f.tab();
+  assert.equal(f.document.activeElement, f.elements.infoX);
+  f.elements.infoBtn.isConnected = false;
+  assert.doesNotThrow(() => f.context.closeInfo());
+  assert.equal(f.elements.infoOverlay.classList.contains('open'), false);
+  assert.doesNotThrow(() => f.context.closeInfo());
+});
 const runFunction = (context, name) => vm.runInContext(main.split('\n').find(line => line.startsWith(`function ${name}(`)), context);
 
 test('all input labels and persistent polite status regions are connected', () => {
