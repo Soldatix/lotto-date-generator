@@ -1,4 +1,7 @@
 import { version } from '../package.json';
+import { registerPwa } from './js/pwa.js';
+
+registerPwa();
 
 import { getHistory, addHistory, deleteHistory, getLanguage, setLanguage } from './js/storage.js';
 import { createLiveStatus } from './js/accessibility.js';
