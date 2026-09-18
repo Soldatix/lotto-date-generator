@@ -47,7 +47,7 @@ test('reject incomplete, nonnumeric, out-of-range and duplicate records', () => 
 
 test('normal Save/Delete and theme/language round trips', () => {
   reset();
-  assert.equal(storage.getTheme(), 'dark');
+  assert.equal(storage.getTheme(), 'system');
   assert.equal(storage.getLanguage(), 'en');
   assert.equal(storage.addHistory(valid), true);
   const history = storage.getHistory();
@@ -78,7 +78,7 @@ test('actual language initialization and change handler restore and persist the 
     $: id => { if (!elements.has(id)) elements.set(id, { value: '' }); return elements.get(id); },
     document: { documentElement: {}, querySelectorAll: () => [] },
     applyTheme() {}, renderPresets() {}, renderHistory() {}, applyInfoLanguage() {},
-    selectPreset() {}, generate() {}, reset() {}, toggleTheme() {}, toggleFullscreen() {} });
+    selectPreset() {}, generate() {}, reset() {}, selectTheme() {}, toggleFullscreen() {} });
   vm.runInContext(lines.find(line => line.startsWith('function applyLanguage(')), context);
   vm.runInContext(lines.find(line => line.startsWith("$('generateBtn').onclick=")), context);
   const init = lines.find(line => line.startsWith('(function init()'));
@@ -120,7 +120,7 @@ test('SecurityError from getItem or localStorage getter and unavailable storage'
     if (mode === 'getter') Object.defineProperty(globalThis, 'localStorage', { configurable: true, get: fail });
     if (mode === 'missing') delete globalThis.localStorage;
     assert.deepEqual(storage.getHistory(), []);
-    assert.equal(storage.getTheme(), 'dark');
+    assert.equal(storage.getTheme(), 'system');
     assert.equal(storage.getLanguage(), 'en');
     if (mode !== 'getItem') assert.equal(storage.addHistory(valid), false);
   }

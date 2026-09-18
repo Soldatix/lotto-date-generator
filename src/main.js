@@ -3,7 +3,7 @@ import { getHistory, addHistory, deleteHistory, getLanguage, setLanguage } from 
 import { createLiveStatus } from './js/accessibility.js';
 import { createClipboardHandlers } from './js/clipboard.js';
 import { createInfoModalHandlers } from './js/info-modal.js';
-import { applyTheme, toggleTheme } from './js/theme.js';
+import { applyTheme, selectTheme } from './js/theme.js';
 import { toggleFullscreen } from './js/fullscreen.js';
 import { presets } from './data/presets.js';
 import { T } from './data/translations.js';
@@ -26,7 +26,7 @@ function applyLanguage(){announce.clear();document.documentElement.lang=$('langu
 function reset(){announce.clear();selectPreset('6');$('salt').value='';$('dateInput').value='';lastResult=null;$('resultArea').className='empty';$('resultArea').innerHTML=`<div class="big">🎱</div><p>${tr('empty')}</p>`}
 
 $('infoBtn').onclick=openInfo;$('infoX').onclick=closeInfo;$('infoClose').onclick=closeInfo;$('infoOverlay').addEventListener('click',handleInfoOverlayClick);document.addEventListener('keydown',handleInfoKeydown);document.querySelectorAll('.copy-wallet').forEach(b=>b.onclick=()=>copyWallet(b));
-$('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeBtn').onclick=toggleTheme;$('fullscreenBtn').onclick=toggleFullscreen;
+$('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeSelect').onchange=e=>selectTheme(e.target.value);$('fullscreenBtn').onclick=toggleFullscreen;
 ['mainCount','mainMax','extraCount','extraMax'].forEach(id=>$(id).addEventListener('input',()=>{currentPreset='custom';renderPresets()}));
 $('dateInput').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);e.target.value=v});
 (function init(){$('language').value=getLanguage();applyTheme();$('dateInput').value='';applyLanguage();selectPreset('6');renderHistory()})();

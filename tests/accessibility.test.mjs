@@ -144,6 +144,35 @@ test('Info handles unavailable opener, changed controls, outside focus and click
 });
 const runFunction = (context, name) => vm.runInContext(main.split('\n').find(line => line.startsWith(`function ${name}(`)), context);
 
+test('manual and OS theme changes preserve the open Info modal, focus and form state', () => {
+  const f = modalFixture();
+  let listener;
+  const media = { matches: false, addEventListener(type, fn) { listener = fn; } };
+  Object.assign(f.context, { getTheme: () => 'system', setTheme() {}, window: { matchMedia: () => media } });
+  f.elements.themeSelect = { value: '' };
+  f.elements.dateInput = { value: '18/09/2026' };
+  f.elements.salt = { value: 'personal key' };
+  f.document.documentElement = { dataset: {} };
+  f.document.getElementById = id => f.elements[id];
+  vm.runInContext(read('src/js/theme.js').replace(/^import .*\r?\n/, '').replaceAll('export ', ''), f.context);
+  f.context.applyTheme();
+  f.context.openInfo();
+  for (const mode of ['light', 'dark', 'system']) {
+    f.context.selectTheme(mode);
+    for (const dark of [true, false]) {
+      media.matches = dark;
+      listener();
+      assert.equal(f.document.documentElement.dataset.theme, mode === 'system' ? (dark ? 'dark' : 'light') : mode);
+      assert.equal(f.elements.infoOverlay.classList.contains('open'), true);
+      assert.equal(f.elements.infoOverlay['aria-hidden'], 'false');
+      assert.equal(f.document.body.style.overflow, 'hidden');
+      assert.equal(f.document.activeElement, f.elements.infoX);
+      assert.equal(f.elements.dateInput.value, '18/09/2026');
+      assert.equal(f.elements.salt.value, 'personal key');
+    }
+  }
+});
+
 test('all input labels and persistent polite status regions are connected', () => {
   for (const id of ['dateInput', 'mainCount', 'mainMax', 'extraCount', 'extraMax', 'salt']) {
     assert.match(html, new RegExp(`<label for="${id}"[^>]*>`));
