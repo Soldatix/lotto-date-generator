@@ -73,7 +73,7 @@ test('Info dialog semantics, initial focus and keyboard access to every payment 
   assert.equal(f.document.activeElement, f.elements.infoX);
   assert.equal(f.elements.infoOverlay['aria-hidden'], 'false');
   assert.equal(f.document.body.style.overflow, 'hidden');
-  assert.equal(f.controls.filter(c => c.tag === 'a').length, 2);
+  assert.equal(f.controls.filter(c => c.tag === 'a').length, 3);
   assert.equal(f.controls.filter(c => c.attributes.includes('copy-wallet')).length, 8);
   const visited = new Set();
   for (let i = 0; i < f.controls.length * 3; i++) {
@@ -293,3 +293,77 @@ test('Light info-kicker contrast exceeds 4.5:1 on its actual mixed background', 
   assert.ok(ratio(hex(color)) > ratio(hex('1fdba5')));
   console.log(`info-kicker contrast: ${ratio(hex('1fdba5')).toFixed(2)} -> ${ratio(hex(color)).toFixed(2)}:1`);
 });
+
+
+const expectedPayments = {
+  "links": [
+    "https://www.paypal.com/ncp/payment/RU2CWCNVQ7XD6",
+    "https://buy.stripe.com/7sYeVd7Blfe89cm0k02kw00"
+  ],
+  "addresses": [
+    "bc1qwlrxrh64peukga0fp59m9yg7gpf0yj8q7fxnsc",
+    "0xA99A52085c6725854daa46bb302041569c8bA4E3",
+    "rP43SsrkhPkxTsFohMAm32sAQg7vqwmDpr",
+    "8xkdVTEaDGuWu4aE3HpEx8r9Aux98JZbdsMiDQvJWBWR",
+    "DGAT32ku8WmFaTDxCgVuRuVpUFmfdmD5Jb",
+    "GCYH4OD4I2GNRKFFOYROE3N3S2HCT5RXIML3TZV5DP3TLTLXPXQXIJZ3",
+    "LWtaFniqdYpv2xJtqo9WqDwCsQ2cW6PYWi",
+    "RAtXzKZyB3awfq2u2cK8YppC9kJamU5tPQ"
+  ],
+  "copyValues": [
+    "bc1qwlrxrh64peukga0fp59m9yg7gpf0yj8q7fxnsc",
+    "0xA99A52085c6725854daa46bb302041569c8bA4E3",
+    "rP43SsrkhPkxTsFohMAm32sAQg7vqwmDpr",
+    "8xkdVTEaDGuWu4aE3HpEx8r9Aux98JZbdsMiDQvJWBWR",
+    "DGAT32ku8WmFaTDxCgVuRuVpUFmfdmD5Jb",
+    "GCYH4OD4I2GNRKFFOYROE3N3S2HCT5RXIML3TZV5DP3TLTLXPXQXIJZ3",
+    "LWtaFniqdYpv2xJtqo9WqDwCsQ2cW6PYWi",
+    "RAtXzKZyB3awfq2u2cK8YppC9kJamU5tPQ"
+  ]
+};
+test('Info preserves exact PayPal, Stripe and all displayed/copied crypto values', () => {
+  const actual = {
+    links: [...html.matchAll(/href="(https:\/\/(?:www\.paypal\.com|buy\.stripe\.com)[^"]+)"/g)].map(m => m[1]),
+    addresses: [...html.matchAll(/class="wallet-address">([^<]+)</g)].map(m => m[1]),
+    copyValues: [...html.matchAll(/data-wallet="([^"]+)"/g)].map(m => m[1])
+  };
+  assert.deepEqual(actual, expectedPayments);
+});
+
+test('Info app identity, package version and safe Apps & Games link', () => {
+  const markup = html.slice(html.indexOf('<div class="info-overlay"'));
+  assert.match(markup, /<strong>Date Lotto Generator<\/strong>/);
+  assert.match(markup, /href="https:\/\/appsandgames.org\/" target="_blank" rel="noopener noreferrer"/);
+  assert.match(main, /import \{ version \} from '\.\.\/package.json'/);
+  const version = JSON.parse(read('package.json')).version;
+  const output = {};
+  vm.runInNewContext(main.split('\n').find(line => line.startsWith("$('infoVersion').textContent=")), { version, $: () => output });
+  assert.equal(output.textContent, version);
+  assert.match(markup, /id="infoVersion"><\/span>/);
+});
+
+for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
+  test('Info complete localized standard content and rendering: ' + lang, () => {
+    const keys = [...html.matchAll(/data-info-i18n="([^"]+)"/g)].map(m => m[1]);
+    for (const key of ['about','description','features','featureList','version','free','privacy','localData','historyData','themeData','languageData','personalKey','brandText','visit','support','p1']) {
+      assert.ok(keys.includes(key), key);
+    }
+    const nodes = keys.map(key => ({ dataset: { infoI18n: key }, textContent: '' }));
+    const context = vm.createContext({ INFO_T, $: () => ({ value: lang }), document: {
+      querySelectorAll: selector => selector === '[data-info-i18n]' ? nodes : []
+    } });
+    vm.runInContext(read('src/js/info-modal.js').replace(/^import .*\r?\n/, '').replace('export function', 'function') + '\ncreateInfoModalHandlers({ $ }).applyInfoLanguage();', context);
+    for (const node of nodes) {
+      const key = node.dataset.infoI18n;
+      assert.ok(Object.hasOwn(INFO_T[lang], key), key);
+      assert.ok(INFO_T[lang][key].trim(), key);
+      assert.equal(node.textContent, INFO_T[lang][key]);
+    }
+    assert.match(INFO_T[lang].localData, /localStorage/);
+    assert.match(INFO_T[lang].personalKey, /Personal Key/);
+    assert.match(INFO_T[lang].personalKey, /localStorage/);
+    const terms = { en: ['Save', 'not a password', 'voluntary', 'remains free'], hr: ['Spremi', 'nije lozinka', 'dobrovoljne', 'ostaje besplatna'], de: ['Speichern', 'kein Passwort', 'freiwillig', 'bleibt kostenlos'], it: ['Salva', 'non è una password', 'volontarie', 'rimane gratuita'], es: ['Guardar', 'no es una contraseña', 'voluntarias', 'seguirá siendo gratuita'] }[lang];
+    for (const term of terms.slice(0, 2)) assert.ok(INFO_T[lang].personalKey.includes(term));
+    for (const term of terms.slice(2)) assert.ok(INFO_T[lang].p1.includes(term));
+  });
+}

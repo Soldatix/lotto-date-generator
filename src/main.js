@@ -1,3 +1,4 @@
+import { version } from '../package.json';
 
 import { getHistory, addHistory, deleteHistory, getLanguage, setLanguage } from './js/storage.js';
 import { createLiveStatus } from './js/accessibility.js';
@@ -10,6 +11,7 @@ import { T } from './data/translations.js';
 import { hash32, mulberry32, uniqueNums, todayDMY, parseDMY, displayDate } from './js/generator.js';
 
 const $=id=>document.getElementById(id); let currentPreset='6'; let lastResult=null;
+$('infoVersion').textContent=version;
 const announce=createLiveStatus({ $ });
 const { infoTr, applyInfoLanguage, openInfo, closeInfo, handleInfoOverlayClick, handleInfoKeydown }=createInfoModalHandlers({ $ });
 const { copyResult, copyHistory, copyWallet }=createClipboardHandlers({ $, getLastResult:()=>lastResult, resultString, tr, infoTr, announce });
