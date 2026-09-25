@@ -1,5 +1,6 @@
 import { version } from '../package.json';
 import { initializePwaTitle, initializeWebInstall, registerPwa } from './js/pwa.js';
+import { enhanceLanguageMenus } from './js/ag-language-menu.js';
 
 initializePwaTitle();
 registerPwa();
@@ -16,6 +17,7 @@ import { T, WEB_INSTALL_T } from './data/translations.js';
 import { hash32, mulberry32, uniqueNums, todayDMY, parseDMY, displayDate } from './js/generator.js';
 
 const $=id=>document.getElementById(id); let currentPreset='6'; let lastResult=null;
+enhanceLanguageMenus();
 const webInstall = initializeWebInstall({ $, getText: () => WEB_INSTALL_T[$('language').value] || WEB_INSTALL_T.en });
 $('infoVersion').textContent=version;
 const announce=createLiveStatus({ $ });
