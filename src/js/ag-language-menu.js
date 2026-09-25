@@ -1,3 +1,4 @@
+// Apps & Games Master Language Menu — local PWA-safe copy
 const LANGUAGES = [
   { value: 'en', code: 'EN', name: 'English' },
   { value: 'hr', code: 'HR', name: 'Hrvatski' },
