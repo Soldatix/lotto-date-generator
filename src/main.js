@@ -1,5 +1,6 @@
 import { version } from '../package.json';
 import { initializePwaTitle, registerPwa } from './js/pwa.js';
+import { enhanceLanguageMenus } from './js/ag-language-menu.js';
 
 initializePwaTitle();
 registerPwa();
@@ -16,6 +17,7 @@ import { T } from './data/translations.js';
 import { hash32, mulberry32, uniqueNums, todayDMY, parseDMY, displayDate } from './js/generator.js';
 
 const $=id=>document.getElementById(id); let currentPreset='6'; let lastResult=null;
+enhanceLanguageMenus();
 $('infoVersion').textContent=version;
 const announce=createLiveStatus({ $ });
 const { infoTr, applyInfoLanguage, openInfo, closeInfo, handleInfoOverlayClick, handleInfoKeydown }=createInfoModalHandlers({ $ });
