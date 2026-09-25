@@ -199,6 +199,10 @@ function enhanceSelect(select) {
   });
 
   select.addEventListener('change', updateDisplay);
+  const languageObserver = new MutationObserver((mutations) => {
+    if (mutations.some((mutation) => mutation.attributeName === 'lang')) updateDisplay();
+  });
+  languageObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   select.insertAdjacentElement('afterend', menu);
   menu.append(button, options);
   updateDisplay();
