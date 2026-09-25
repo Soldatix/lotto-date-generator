@@ -74,3 +74,5 @@ regression at 320, 360, 390, 768 and 1280 px in all five languages, using one an
 multiple saved entries, long personal keys and maximum-length 20+10 results.
 It verifies document/card/content widths, readable untruncated text, mobile touch
 targets and working History Copy/Delete controls.
+
+<!-- diagnostic build touch: no application code changes -->
