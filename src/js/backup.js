@@ -37,10 +37,48 @@ export function parseBackup(text) {
   return { history: history.map(cleanEntry), language, theme };
 }
 
-export function createBackupHandlers({ $, tr, onRestore, confirmRestore = message => window.confirm(message) }) {
+export function createBackupHandlers({
+  $, tr, onRestore,
+  confirmRestore = message => window.confirm(message),
+  loadNativeApi = () => import('./native-backup.js')
+}) {
   let busy = false;
-  const report = key => { $('backupStatus').dataset.infoI18n = key; $('backupStatus').textContent = tr(key); };
+  let lastBackupPath = null;
+  const isNative = () => window.location?.hostname === 'tauri.localhost' ||
+    typeof window.__TAURI_INTERNALS__ !== 'undefined';
+  const report = key => {
+    const status = $('backupStatus');
+    status.dataset.infoI18n = key;
+    delete status.dataset.backupPath;
+    status.textContent = tr(key);
+  };
+  const reportSaved = path => {
+    const status = $('backupStatus');
+    status.dataset.infoI18n = 'backupSaved';
+    status.dataset.backupPath = path;
+    status.textContent = tr('backupSaved') + ' ' + path;
+  };
+
+  async function exportNativeBackup() {
+    if (busy) return;
+    busy = true;
+    try {
+      const backup = createBackup();
+      const api = await loadNativeApi();
+      const filename = `date-lotto-generator-backup-${backup.exportedAt.slice(0, 10)}.json`;
+      const path = await api.saveNativeBackup(JSON.stringify(backup, null, 2), filename, tr('backupExport'));
+      if (path === null) { report('backupExportCancelled'); return; }
+      lastBackupPath = path;
+      reportSaved(path);
+    } catch {
+      report('backupExportFailed');
+    } finally {
+      busy = false;
+    }
+  }
+
   function exportBackup() {
+    if (isNative()) return exportNativeBackup();
     let url;
     let link;
     try {
@@ -58,12 +96,20 @@ export function createBackupHandlers({ $, tr, onRestore, confirmRestore = messag
       if (url) setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
   }
+
   async function importBackup() {
     if (busy) return;
-    const file = $('backupFile').files?.[0];
-    if (!file) return;
+    let file = $('backupFile').files?.[0];
     busy = true;
     try {
+      if (!file && isNative()) {
+        const api = await loadNativeApi();
+        const selected = await api.openNativeBackup(lastBackupPath, tr('backupImport'));
+        if (selected === null) { report('backupCancelled'); return; }
+        lastBackupPath = selected.path;
+        file = { name: selected.path, text: async () => selected.text };
+      }
+      if (!file) return;
       if (!/\.json$/i.test(file.name)) { report('backupInvalid'); return; }
       let data;
       try { data = parseBackup(await file.text()); }
@@ -73,6 +119,8 @@ export function createBackupHandlers({ $, tr, onRestore, confirmRestore = messag
       if (result !== 'restored') { report(result); return; }
       onRestore(data);
       report('backupRestored');
+    } catch {
+      report('backupInvalid');
     } finally {
       $('backupFile').value = '';
       busy = false;

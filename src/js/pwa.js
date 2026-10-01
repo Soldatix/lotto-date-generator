@@ -97,6 +97,18 @@ export function initializeWebInstall({ $, getText }) {
 // Native registration leaves updates waiting until all app tabs have closed.
 // No controllerchange reload, skipWaiting message, or localStorage changes.
 export function registerPwa() {
+  // The native Tauri origin (tauri.localhost) must never cache app files via a web PWA worker.
+  // Best-effort migration of an existing native registration; do not touch localStorage.
+  if (window.location.hostname === 'tauri.localhost' ||
+      typeof window.__TAURI_INTERNALS__ !== 'undefined') {
+    const worker = navigator.serviceWorker;
+    if (worker && typeof worker.getRegistration === 'function') {
+      worker.getRegistration()
+        .then(registration => registration?.unregister())
+        .catch(error => console.warn('Native service worker cleanup failed:', error));
+    }
+    return;
+  }
   if (!import.meta.env.PROD || !window.isSecureContext ||
       !['http:', 'https:'].includes(window.location.protocol) ||
       !('serviceWorker' in navigator)) return;

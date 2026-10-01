@@ -69,6 +69,38 @@ test('PWA registration requires production, secure HTTP(S), and browser support'
     }
 });
 
+test('native Tauri never registers PWA and unregisters only a matching legacy registration', async () => {
+  for (const native of ['hostname', 'internals']) {
+    let registrations = 0, lookups = 0, unregisters = 0;
+    const location = { protocol: 'http:', hostname: native === 'hostname' ? 'tauri.localhost' : 'other.localhost' };
+    const window = { isSecureContext: true, location };
+    if (native === 'internals') window.__TAURI_INTERNALS__ = {};
+    const navigator = { serviceWorker: {
+      register: () => { registrations++; return Promise.resolve(); },
+      getRegistration: () => {
+        lookups++;
+        return Promise.resolve({ unregister: () => { unregisters++; return Promise.resolve(true); } });
+      }
+    } };
+    const context = vm.createContext({ window, navigator,
+      document: { readyState: 'complete' }, console });
+    vm.runInContext(source.replaceAll('export ', '')
+      .replaceAll('import.meta.env.PROD', 'true')
+      .replaceAll('import.meta.env.BASE_URL', "'./'") + '\nregisterPwa();', context);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(registrations, 0, native);
+    assert.equal(lookups, 1, native);
+    assert.equal(unregisters, 1, native);
+  }
+  const context = vm.createContext({
+    window: { isSecureContext: true, location: { protocol: 'http:', hostname: 'tauri.localhost' } },
+    navigator: {}, document: { readyState: 'complete' }, console
+  });
+  assert.doesNotThrow(() => vm.runInContext(source.replaceAll('export ', '')
+    .replaceAll('import.meta.env.PROD', 'true')
+    .replaceAll('import.meta.env.BASE_URL', "'./'") + '\nregisterPwa();', context));
+});
+
 test('registration waits for load and handles failure without affecting app', async () => {
   let listener, warning;
   const context = vm.createContext({

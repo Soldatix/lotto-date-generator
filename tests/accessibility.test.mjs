@@ -43,7 +43,7 @@ function modalFixture() {
     ? controls.filter(control => control.attributes.includes('copy-wallet'))
     : controls.filter(control => control.dataset.infoI18n);
   const context = vm.createContext({ document, INFO_T, $: id => elements[id],
-    getComputedStyle: () => ({ visibility: 'visible' }), copyWallet() {} });
+    getComputedStyle: () => ({ visibility: 'visible' }), copyWallet() {}, closeSettings() {} });
   vm.runInContext(read('src/js/info-modal.js').replace(/^import .*\r?\n/, '').replace('export function', 'function'), context);
   vm.runInContext('var { openInfo, closeInfo, applyInfoLanguage, handleInfoKeydown, handleInfoOverlayClick } = createInfoModalHandlers({ $ });', context);
   vm.runInContext(main.split('\n').find(line => line.startsWith("$('infoBtn').onclick=")), context);
@@ -82,7 +82,6 @@ test('Info dialog semantics, initial focus and keyboard access to every payment 
     assert.ok(f.controls.includes(f.document.activeElement));
   }
   assert.equal(visited.size, f.controls.length);
-  assert.ok(visited.has(f.elements.resetStoredData));
   f.elements.infoX.focus();
   f.tab(true);
   assert.equal(f.document.activeElement, f.elements.infoClose);
@@ -122,21 +121,11 @@ test('Info language changes preserve focus and both trap boundaries in every lan
   }
 });
 
-test('Reset control retains focus when successful reset changes the modal language to English', () => {
-  const f = modalFixture();
-  f.context.openInfo();
-  f.elements.language.value = 'hr';
-  f.context.applyInfoLanguage();
-  f.elements.resetStoredData.focus();
-  f.elements.language.value = 'en';
-  f.context.applyInfoLanguage();
-  assert.equal(f.document.activeElement, f.elements.resetStoredData);
-  assert.equal(f.elements.resetStoredData.textContent, 'Reset stored data');
-  f.tab();
-  assert.ok(f.controls.includes(f.document.activeElement));
-  f.elements.infoClose.focus();
-  f.tab();
-  assert.equal(f.document.activeElement, f.elements.infoX);
+test('Info contains no backup or destructive controls after Settings migration', () => {
+  const infoMarkup=html.slice(html.indexOf('<div class="info-overlay" id="infoOverlay"'));
+  for(const id of ['exportBackup','importBackup','backupFile','resetStoredData']) {
+    assert.doesNotMatch(infoMarkup,new RegExp('id="'+id+'"'));
+  }
 });
 
 test('Info handles unavailable opener, changed controls, outside focus and clicks inside the modal', () => {
@@ -240,17 +229,17 @@ test('preset selection and every numeric input keep pressed state synchronized',
   }
 });
 
-test('language change updates all four toolbar names and titles without announcing results', () => {
+test('language change updates all five toolbar names and titles without announcing results', () => {
   const controls = [...html.matchAll(/data-i18n-name="([^"]+)"/g)].map(match => ({
     dataset: { i18nName: match[1] }, setAttribute(key, value) { this[key] = value; }
   }));
-  assert.equal(controls.length, 4);
+  assert.equal(controls.length, 5);
   const language = { value: 'en' };
   let clears = 0;
   const context = vm.createContext({ $: () => language, lastResult: {},
     tr: key => T[language.value][key], announce: { clear() { clears++; } },
     document: { documentElement: {}, querySelectorAll: selector => selector === '[data-i18n-name]' ? controls : [] },
-    renderPresets() {}, renderResult() {}, renderHistory() {}, applyInfoLanguage() {}, webInstall: { applyLanguage() {} }, setLanguage() {} });
+    renderPresets() {}, renderResult() {}, renderHistory() {}, applyInfoLanguage() {}, applySettingsLanguage() {}, webInstall: { applyLanguage() {} }, setLanguage() {} });
   runFunction(context, 'applyLanguage');
   for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
     language.value = lang;

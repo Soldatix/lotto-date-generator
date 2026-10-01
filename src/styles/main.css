@@ -54,3 +54,29 @@ html[data-theme="light"] .info-kicker{color:#087f5b}
 
 /* Stack History controls before text and actions compete for narrow card space. */
 @media(max-width:600px){.histItem{align-items:stretch;flex-direction:column}.histItem>div:last-child{flex:0 1 auto}.histItem .mini{min-width:44px;min-height:44px}}
+
+/* Shared Windows / PWA Settings modal */
+.settings-modal{width:min(660px,100%);max-height:min(88vh,760px)}
+.settings-head{justify-content:space-between}
+.settings-heading{min-width:0}
+.settings-brand{color:var(--blue);font-size:.73rem;letter-spacing:.09em;font-weight:900;margin-bottom:7px}
+.settings-head .info-title{display:flex;align-items:center;gap:6px}
+.settings-x{margin-left:auto;flex:0 0 46px;width:46px;height:46px;border:2px solid color-mix(in srgb,var(--blue) 26%,var(--line));border-radius:16px;background:var(--panel);color:var(--text);font-size:1.2rem;font-weight:800;cursor:pointer}
+.settings-x:hover{border-color:var(--blue)}
+.settings-x:focus-visible,.settings-close:focus-visible,.settings-delete:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.settings-body{display:flex;flex-direction:column;gap:18px}
+.settings-box{padding:18px;border:1px solid var(--line);border-radius:17px;background:color-mix(in srgb,var(--input) 68%,var(--panel))}
+.settings-box h3{font-size:.96rem;font-weight:850;margin:0 0 10px;color:var(--text)}
+.settings-box p{color:var(--muted);line-height:1.5;font-size:.84rem;margin:0 0 14px}
+.settings-actions{display:flex;flex-wrap:wrap;gap:10px}
+#backupStatus{overflow-wrap:anywhere;white-space:pre-wrap}
+.settings-actions .btn,.settings-delete{min-height:42px;white-space:normal}
+.settings-danger{border-color:color-mix(in srgb,var(--red) 34%,var(--line));background:color-mix(in srgb,var(--red) 5%,var(--panel))}
+.settings-danger h3{color:#d32f50}
+html[data-theme="dark"] .settings-danger h3{color:#ff7892}
+.settings-delete{border-color:color-mix(in srgb,var(--red) 30%,var(--line));color:#cf3453;background:color-mix(in srgb,var(--red) 7%,var(--panel));font-weight:800}
+html[data-theme="dark"] .settings-delete{color:#ff8da0}
+.settings-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.settings-local{font-size:.78rem;color:var(--muted)}
+.settings-close{background:linear-gradient(135deg,var(--blue),var(--purple2));color:white}
+@media(max-width:480px){.settings-modal{max-height:94vh}.settings-body{padding:16px 13px}.settings-box{padding:14px}.settings-actions{flex-direction:column}.settings-actions .btn{width:100%}.settings-head,.settings-foot{padding:13px}}

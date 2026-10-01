@@ -16,7 +16,7 @@ function fixture(values = initial()) {
   const announce = (...args) => { messages.push(args); $(args[1]).textContent = args[0]; };
   announce.clear = () => {};
   const context = vm.createContext({ $, announce, confirmed: true, lastResult: structuredClone(entry), currentPreset: 'custom',
-    copyResult() {}, saveResult() {}, renderPresets() {}, webInstall: { applyLanguage() {} },
+    copyResult() {}, saveResult() {}, renderPresets() {}, applySettingsLanguage() {}, webInstall: { applyLanguage() {} },
     document: { documentElement: { dataset: {} }, getElementById: $, querySelectorAll: () => [], createElement: () => ({}) },
     window: { confirm(message) { confirmations.push(message); return context.confirmed; }, matchMedia: () => ({ matches: true, addEventListener() {} }) },
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem(key) { removals.push(key); data.delete(key); } }
@@ -116,7 +116,7 @@ test('All five languages provide all reset messages and confirmation uses curren
 });
 test('Keyboard-accessible named native button and native confirmation; existing live status', () => {
   const html = read('index.html');
-  assert.match(html, /<button type="button" class="btn secondary" id="resetStoredData" data-info-i18n="resetStoredData">Reset stored data<\/button>/);
+  assert.match(html, /<button type="button" class="btn secondary settings-delete" id="resetStoredData" data-settings-i18n="resetStoredData">Delete all stored data<\/button>/);
   assert.match(read('src/js/backup.js'), /confirmReset = message => window.confirm\(message\)/);
   assert.match(html, /id="infoLiveStatus"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.doesNotMatch(read('src/js/storage.js'), /localStorage\.clear\(/);

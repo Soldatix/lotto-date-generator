@@ -11,7 +11,7 @@ const entry = { date: '18/09/2026', m: 2, mm: 49, e: 1, em: 12,
 const backup = () => ({ app: 'date-lotto-generator', version: 1, exportedAt: '2026-09-18T12:00:00.000Z',
   data: { history: [structuredClone(entry)], language: 'hr', theme: 'dark' } });
 const plain = value => JSON.parse(JSON.stringify(value));
-function fixture(initial = [['lottoHistory', '[]'], ['lottoLang', 'en'], ['lottoTheme', 'light'], ['otherApp', 'unchanged']]) {
+function fixture(initial = [['lottoHistory', '[]'], ['lottoLang', 'en'], ['lottoTheme', 'light'], ['otherApp', 'unchanged']], nativeApi = null) {
   const data = new Map(initial), nodes = new Map(), calls = [], links = [];
   const $ = id => {
     if (!nodes.has(id)) nodes.set(id, { value: '', dataset: {}, textContent: '', innerHTML: '', rows: [],
@@ -28,7 +28,7 @@ function fixture(initial = [['lottoHistory', '[]'], ['lottoLang', 'en'], ['lotto
     matchMedia: () => ({ matches: true, addEventListener() {} }) },
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) },
     confirmed: true, announce: { clear() {} }, lastResult: null,
-    renderPresets() {}, applyInfoLanguage() {}, webInstall: { applyLanguage() {} } });
+    renderPresets() {}, applyInfoLanguage() {}, applySettingsLanguage() {}, webInstall: { applyLanguage() {} } });
   for (const path of ['src/js/generator.js', 'src/js/storage.js', 'src/js/theme.js', 'src/data/translations.js', 'src/js/backup.js']) {
     vm.runInContext(read(path).replace(/^import .*\r?\n/gm, '').replaceAll('export ', ''), context);
   }
@@ -36,13 +36,73 @@ function fixture(initial = [['lottoHistory', '[]'], ['lottoLang', 'en'], ['lotto
     vm.runInContext(main.split('\n').find(line => line.startsWith(`function ${name}(`)), context);
   }
   context.infoTr = key => vm.runInContext('INFO_T', context)[$('language').value || 'en'][key];
-  for (const line of main.split('\n').filter(line => line.startsWith('const { exportBackup, importBackup }=') || /^\$\('(exportBackup|importBackup|backupFile)'\)/.test(line))) vm.runInContext(line, context);
+  context.nativeApi = nativeApi;
+  if (nativeApi) context.window.__TAURI_INTERNALS__ = {};
+  for (const line of main.split('\n').filter(line => line.startsWith('const { exportBackup, importBackup }=') || /^\$\('(exportBackup|importBackup|backupFile)'\)/.test(line))) {
+    const injected = nativeApi && line.startsWith('const { exportBackup, importBackup }=')
+      ? line.replace('createBackupHandlers({ $', 'createBackupHandlers({ loadNativeApi: () => Promise.resolve(nativeApi), $')
+      : line;
+    vm.runInContext(injected, context);
+  }
   const importFile = async (text, name = 'backup.json') => {
     $('backupFile').files = [{ name, text: async () => text }];
     await $('backupFile').onchange();
   };
   return { context, data, $, calls, links, importFile, status: () => $('backupStatus').dataset.infoI18n };
 }
+
+
+test('native Save As records the exact chosen path and Open defaults to it', async () => {
+  let savedContent, filename, openedFrom, calls = 0;
+  const path = 'E:\\Backups\\date-lotto-generator-backup-2026-10-01.json';
+  const api = {
+    async saveNativeBackup(content, defaultName) {
+      calls++;
+      savedContent = content; filename = defaultName;
+      return path;
+    },
+    async openNativeBackup(defaultPath) {
+      openedFrom = defaultPath;
+      return { path, text: savedContent };
+    }
+  };
+  const f = fixture(undefined, api);
+  await f.$('exportBackup').onclick();
+  assert.equal(calls, 1);
+  assert.match(filename, /^date-lotto-generator-backup-\d{4}-\d{2}-\d{2}\.json$/);
+  assert.equal(JSON.parse(savedContent).app, 'date-lotto-generator');
+  assert.equal(f.status(), 'backupSaved');
+  assert.equal(f.$('backupStatus').dataset.backupPath, path);
+  assert.ok(f.$('backupStatus').textContent.includes(path));
+  f.data.delete('lottoHistory');
+  await f.$('importBackup').onclick();
+  assert.equal(openedFrom, path);
+  assert.equal(f.status(), 'backupRestored');
+  assert.equal(f.$('backupStatus').dataset.backupPath, undefined);
+  assert.equal(f.data.get('otherApp'), 'unchanged');
+});
+
+test('native Save As/Open cancellation and errors do not claim success or overwrite data', async () => {
+  const initial = [['lottoHistory', '[]'], ['lottoLang', 'hr'], ['lottoTheme', 'dark'], ['otherApp', 'unchanged']];
+  const api = {
+    saveNativeBackup: async () => null,
+    openNativeBackup: async () => null
+  };
+  const f = fixture(initial, api);
+  const before = [...f.data];
+  await f.$('exportBackup').onclick();
+  assert.equal(f.status(), 'backupExportCancelled');
+  await f.$('importBackup').onclick();
+  assert.equal(f.status(), 'backupCancelled');
+  assert.deepEqual([...f.data], before);
+  api.saveNativeBackup = async () => { throw new Error('write denied'); };
+  await f.$('exportBackup').onclick();
+  assert.equal(f.status(), 'backupExportFailed');
+  api.openNativeBackup = async () => ({ path: 'backup.json', text: '{bad' });
+  await f.$('importBackup').onclick();
+  assert.equal(f.status(), 'backupInvalid');
+  assert.deepEqual([...f.data], before);
+});
 
 test('empty export: defaults, exact schema, dated JSON download and no storage writes', async () => {
   const f = fixture([]);
@@ -199,7 +259,7 @@ test('all five languages have every UI, confirmation and status message', () => 
   const f = fixture();
   const translations = vm.runInContext('BACKUP_T', f.context);
   const keys = Object.keys(translations.en);
-  assert.equal(keys.length, 12);
+  assert.equal(keys.length, 14);
   for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
     assert.deepEqual(Object.keys(translations[lang]), keys);
     for (const key of keys) assert.ok(translations[lang][key].trim());
@@ -211,7 +271,7 @@ test('native keyboard controls keep visible names and activate named hidden JSON
   for (const id of ['exportBackup', 'importBackup']) {
     const button = html.match(new RegExp(`<button[^>]*id="${id}"[^>]*>[^<]+<\\/button>`))[0];
     assert.match(button, /type="button"/);
-    assert.match(button, /data-info-i18n=/);
+    assert.match(button, /data-settings-i18n=/);
     assert.doesNotMatch(button, /tabindex="-1"|disabled|hidden/);
   }
   assert.match(html, /<input type="file" id="backupFile" accept="\.json,application\/json" hidden aria-labelledby="importBackup">/);
