@@ -58,8 +58,11 @@ export function addHistory(result) {
 }
 
 export function deleteHistory(history, index) {
-  // Keep the caller's history intact if persistence fails.
-  const next = history.slice();
+  // Never write an old tab's history snapshot over newer saved combinations.
+  if (!Array.isArray(history) || !Number.isInteger(index) || index < 0 || index >= history.length) return false;
+  const current = getHistory();
+  if (JSON.stringify(current) !== JSON.stringify(history)) return false;
+  const next = current.slice();
   next.splice(index, 1);
   return setHistory(next);
 }

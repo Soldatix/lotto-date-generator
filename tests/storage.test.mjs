@@ -206,6 +206,113 @@ test('actual Save/History handlers: corrupt history renders safely; failed save 
   assert.deepEqual(storage.getHistory(), [valid]);
 });
 
+
+test('stale tab deletion is rejected without losing a newer saved combination', () => {
+  reset(JSON.stringify([valid]));
+  const tabBSnapshot = storage.getHistory();
+  const newer = { ...valid, date: '18/09/2026', salt: 'saved-in-tab-A',
+    created: '2026-09-18T12:00:00.000Z' };
+  assert.equal(storage.addHistory(newer), true);
+  const expected = storage.getHistory();
+  assert.deepEqual(expected, [newer, valid]);
+  let writes = 0;
+  const originalSetItem = localStorage.setItem;
+  localStorage.setItem = (key, value) => { writes++; return originalSetItem(key, value); };
+  assert.equal(storage.deleteHistory(tabBSnapshot, 0), false);
+  assert.equal(writes, 0, 'stale Delete must not write any data');
+  assert.deepEqual(storage.getHistory(), expected);
+  assert.deepEqual(tabBSnapshot, [valid], 'stale caller snapshot remains intact');
+  assert.equal(storage.deleteHistory(storage.getHistory(), 1), true);
+  assert.deepEqual(storage.getHistory(), [newer]);
+});
+
+test('stale reordered/deleted history and invalid indices never overwrite storage', () => {
+  const other = { ...valid, salt: 'second', date: '19/09/2026',
+    created: '2026-09-19T12:00:00.000Z' };
+  reset(JSON.stringify([valid, other]));
+  const stale = storage.getHistory();
+  data.set('lottoHistory', JSON.stringify([other, valid]));
+  const before = data.get('lottoHistory');
+  let writes = 0;
+  localStorage.setItem = () => { writes++; throw new Error('must not write'); };
+  assert.equal(storage.deleteHistory(stale, 0), false);
+  for (const index of [-1, 2, 0.5, NaN, Infinity]) {
+    assert.equal(storage.deleteHistory(storage.getHistory(), index), false);
+  }
+  assert.equal(storage.deleteHistory(null, 0), false);
+  assert.equal(writes, 0);
+  assert.equal(data.get('lottoHistory'), before);
+});
+
+test('identical duplicate records delete exactly the selected index from current history', () => {
+  const other = { ...valid, salt: 'different' };
+  reset(JSON.stringify([valid, other, valid]));
+  const snapshot = storage.getHistory();
+  assert.equal(storage.deleteHistory(snapshot, 2), true);
+  assert.deepEqual(storage.getHistory(), [valid, other]);
+  assert.deepEqual(snapshot, [valid, other, valid]);
+});
+
+test('stale UI Delete reports a localized refresh, not a storage failure, and keeps newer saves', () => {
+  reset(JSON.stringify([valid]));
+  const stale = storage.getHistory();
+  const newer = { ...valid, date: '18/09/2026', salt: 'newer',
+    created: '2026-09-18T12:00:00.000Z' };
+  storage.addHistory(newer);
+  const messages = [], rendered = [];
+  const context = vm.createContext({ ...storage, tr: key => key,
+    announce: message => messages.push(message), renderHistory: () => rendered.push(storage.getHistory()) });
+  const line = readFileSync('src/main.js', 'utf8').split('\n').find(line => line.startsWith('function deleteHistoryEntry('));
+  vm.runInContext(line, context);
+  context.deleteHistoryEntry(stale, 0);
+  assert.deepEqual(messages, ['historyChanged']);
+  assert.deepEqual(rendered.at(-1), [newer, valid]);
+  assert.deepEqual(storage.getHistory(), [newer, valid]);
+  context.deleteHistoryEntry(storage.getHistory(), 1);
+  assert.deepEqual(storage.getHistory(), [newer]);
+  assert.equal(messages.length, 1);
+});
+
+test('UI Delete still reports persistence errors without claiming that history changed', () => {
+  reset(JSON.stringify([valid]));
+  const snapshot = storage.getHistory(), messages = [];
+  localStorage.setItem = () => { throw new Error('quota'); };
+  const context = vm.createContext({ ...storage, tr: key => key,
+    announce: message => messages.push(message), renderHistory() {} });
+  const line = readFileSync('src/main.js', 'utf8').split('\n').find(line => line.startsWith('function deleteHistoryEntry('));
+  vm.runInContext(line, context);
+  context.deleteHistoryEntry(snapshot, 0);
+  assert.deepEqual(messages, ['deleteFailed']);
+  assert.deepEqual(storage.getHistory(), [valid]);
+});
+
+test('storage events refresh History for another tab without reacting to unrelated keys', () => {
+  const listeners = [];
+  const context = vm.createContext({ window: { addEventListener(type, handler) {
+    listeners.push({ type, handler });
+  } }, renderHistory() { calls++; } });
+  let calls = 0;
+  const source = readFileSync('src/main.js', 'utf8');
+  const statement = source.match(/window\.addEventListener\('storage', event => \{[\s\S]*?\n\}\);/);
+  assert.ok(statement, 'history storage listener must exist');
+  vm.runInContext(statement[0], context);
+  assert.equal(listeners.length, 1);
+  assert.equal(listeners[0].type, 'storage');
+  listeners[0].handler({ key: 'lottoTheme' });
+  assert.equal(calls, 0);
+  listeners[0].handler({ key: 'lottoHistory' });
+  assert.equal(calls, 1);
+  listeners[0].handler({ key: null });
+  assert.equal(calls, 2);
+});
+
+test('all five languages explain that a stale History was refreshed', () => {
+  for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
+    assert.ok(T[lang].historyChanged?.trim(), lang);
+    assert.notEqual(T[lang].historyChanged, T[lang].deleteFailed, lang);
+  }
+});
+
 test('Lotto regression against branch HEAD: presets, custom boundaries, dates and salts', async () => {
   const baselineSource = execFileSync('git', ['show', 'HEAD:src/js/generator.js'], { encoding: 'utf8' });
   const baseline = await load(baselineSource);
