@@ -1,13 +1,34 @@
 import { getHistory, getLanguage, getTheme, validHistoryEntry, HISTORY_LIMIT, restoreData, resetStoredData } from './storage.js';
 
-export function createResetHandler({ $, tr, onReset, announce, confirmReset = message => window.confirm(message) }) {
-  return () => {
-    if (!confirmReset(tr('resetConfirm'))) return;
-    const result = resetStoredData();
-    if (result === 'resetSucceeded') onReset();
-    // Use the repeatable live-status mechanism for consecutive identical errors.
-    $('backupStatus').dataset.infoI18n = result;
-    announce(tr(result), 'backupStatus');
+const isNativeRuntime = () => window.location?.hostname === 'tauri.localhost' ||
+  typeof window.__TAURI_INTERNALS__ !== 'undefined';
+
+let destructiveBusy = false;
+export function createResetHandler({
+  $, tr, onReset, announce,
+  confirmReset = message => isNativeRuntime()
+    ? import('./native-backup.js').then(api => api.confirmNativeAction(message))
+    : window.confirm(message)
+}) {
+  return async () => {
+    if (destructiveBusy) return;
+    destructiveBusy = true;
+    try {
+      let approved;
+      try { approved = await confirmReset(tr('resetConfirm')); }
+      catch {
+        $('backupStatus').dataset.infoI18n = 'resetConfirmFailed';
+        announce(tr('resetConfirmFailed'), 'backupStatus');
+        return;
+      }
+      if (approved !== true) return;
+      const result = resetStoredData();
+      if (result === 'resetSucceeded') onReset();
+      $('backupStatus').dataset.infoI18n = result;
+      announce(tr(result), 'backupStatus');
+    } finally {
+      destructiveBusy = false;
+    }
   };
 }
 
@@ -39,13 +60,12 @@ export function parseBackup(text) {
 
 export function createBackupHandlers({
   $, tr, onRestore,
-  confirmRestore = message => window.confirm(message),
+  confirmRestore = null,
   loadNativeApi = () => import('./native-backup.js')
 }) {
   let busy = false;
   let lastBackupPath = null;
-  const isNative = () => window.location?.hostname === 'tauri.localhost' ||
-    typeof window.__TAURI_INTERNALS__ !== 'undefined';
+  const isNative = isNativeRuntime;
   const report = key => {
     const status = $('backupStatus');
     status.dataset.infoI18n = key;
@@ -114,11 +134,29 @@ export function createBackupHandlers({
       let data;
       try { data = parseBackup(await file.text()); }
       catch { report('backupInvalid'); return; }
-      if (!confirmRestore(tr('backupConfirm'))) { report('backupCancelled'); return; }
-      const result = restoreData(data);
-      if (result !== 'restored') { report(result); return; }
-      onRestore(data);
-      report('backupRestored');
+      if (destructiveBusy) return;
+      destructiveBusy = true;
+      try {
+        let approved;
+        try {
+          const message = tr('backupConfirm');
+          approved = await (confirmRestore
+            ? confirmRestore(message)
+            : isNative()
+              ? (await loadNativeApi()).confirmNativeAction(message)
+              : window.confirm(message));
+        } catch {
+          report('backupConfirmFailed');
+          return;
+        }
+        if (approved !== true) { report('backupCancelled'); return; }
+        const result = restoreData(data);
+        if (result !== 'restored') { report(result); return; }
+        onRestore(data);
+        report('backupRestored');
+      } finally {
+        destructiveBusy = false;
+      }
     } catch {
       report('backupInvalid');
     } finally {

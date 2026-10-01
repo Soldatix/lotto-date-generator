@@ -1,7 +1,11 @@
-import { open, save } from '@tauri-apps/plugin-dialog';
+import { open, save, confirm } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 
 const jsonFilter = [{ name: 'JSON', extensions: ['json'] }];
+
+export function confirmNativeAction(message) {
+  return confirm(message, { title: 'Date Lotto Generator', kind: 'warning' });
+}
 
 export async function saveNativeBackup(content, defaultName, title) {
   const path = await save({ title, defaultPath: defaultName, filters: jsonFilter });

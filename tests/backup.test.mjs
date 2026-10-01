@@ -56,6 +56,7 @@ test('native Save As records the exact chosen path and Open defaults to it', asy
   let savedContent, filename, openedFrom, calls = 0;
   const path = 'E:\\Backups\\date-lotto-generator-backup-2026-10-01.json';
   const api = {
+    async confirmNativeAction() { return true; },
     async saveNativeBackup(content, defaultName) {
       calls++;
       savedContent = content; filename = defaultName;
@@ -85,6 +86,7 @@ test('native Save As records the exact chosen path and Open defaults to it', asy
 test('native Save As/Open cancellation and errors do not claim success or overwrite data', async () => {
   const initial = [['lottoHistory', '[]'], ['lottoLang', 'hr'], ['lottoTheme', 'dark'], ['otherApp', 'unchanged']];
   const api = {
+    confirmNativeAction: async () => true,
     saveNativeBackup: async () => null,
     openNativeBackup: async () => null
   };
@@ -102,6 +104,54 @@ test('native Save As/Open cancellation and errors do not claim success or overwr
   await f.$('importBackup').onclick();
   assert.equal(f.status(), 'backupInvalid');
   assert.deepEqual([...f.data], before);
+});
+
+
+test('Restore waits for asynchronous approval, ignores duplicate attempts and preserves data on Cancel', async () => {
+  const f = fixture(), before = [...f.data];
+  let release, entered, prompts = 0;
+  const shown = new Promise(resolve => { entered = resolve; });
+  f.context.window.confirm = () => { prompts++; entered(); return new Promise(resolve => { release = resolve; }); };
+  const pending = f.importFile(JSON.stringify(backup()));
+  await shown;
+  assert.deepEqual([...f.data], before);
+  await f.$('backupFile').onchange();
+  assert.equal(prompts, 1);
+  release(false);
+  await pending;
+  assert.equal(f.status(), 'backupCancelled');
+  assert.deepEqual([...f.data], before);
+  const g = fixture();
+  let accept, enteredAgain;
+  const nextShown = new Promise(resolve => { enteredAgain = resolve; });
+  g.context.window.confirm = () => { enteredAgain(); return new Promise(resolve => { accept = resolve; }); };
+  const approved = g.importFile(JSON.stringify(backup()));
+  await nextShown;
+  assert.equal(g.data.get('lottoLang'), 'en');
+  accept(true);
+  await approved;
+  assert.equal(g.status(), 'backupRestored');
+  assert.equal(g.data.get('lottoLang'), 'hr');
+});
+
+test('Restore fails closed on rejected confirmation, native Cancel and denied native IPC', async () => {
+  const f = fixture(), before = [...f.data];
+  f.context.window.confirm = () => Promise.reject(new Error('IPC denied'));
+  await f.importFile(JSON.stringify(backup()));
+  assert.equal(f.status(), 'backupConfirmFailed');
+  assert.deepEqual([...f.data], before);
+  const api = {
+    openNativeBackup: async () => ({ path: 'E:\\Backup\\backup.json', text: JSON.stringify(backup()) }),
+    confirmNativeAction: async () => false
+  };
+  const native = fixture(undefined, api), nativeBefore = [...native.data];
+  await native.$('importBackup').onclick();
+  assert.equal(native.status(), 'backupCancelled');
+  assert.deepEqual([...native.data], nativeBefore);
+  api.confirmNativeAction = async () => { throw new Error('IPC denied'); };
+  await native.$('importBackup').onclick();
+  assert.equal(native.status(), 'backupConfirmFailed');
+  assert.deepEqual([...native.data], nativeBefore);
 });
 
 test('empty export: defaults, exact schema, dated JSON download and no storage writes', async () => {
@@ -259,7 +309,7 @@ test('all five languages have every UI, confirmation and status message', () => 
   const f = fixture();
   const translations = vm.runInContext('BACKUP_T', f.context);
   const keys = Object.keys(translations.en);
-  assert.equal(keys.length, 14);
+  assert.equal(keys.length, 15);
   for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
     assert.deepEqual(Object.keys(translations[lang]), keys);
     for (const key of keys) assert.ok(translations[lang][key].trim());

@@ -106,6 +106,7 @@ const BACKUP_T = {
     backupDescription: 'Export your saved history, language and theme to JSON, or restore them from a backup. Saved Personal Keys are included.',
     backupExport: 'Export backup', backupImport: 'Import backup',
     backupConfirm: 'Restore this backup? This will replace your saved history, language and theme.',
+    backupConfirmFailed: 'Could not display the confirmation. Nothing was changed.',
     backupInvalid: 'Invalid JSON backup. Check the app, backup format version and saved data. Nothing was changed.',
     backupCancelled: 'Restore cancelled. Nothing was changed.',
     backupRestored: 'Backup restored.', backupExported: 'Backup download started.',
@@ -119,6 +120,7 @@ const BACKUP_T = {
     backupDescription: 'Izvezite spremljenu povijest, jezik i temu u JSON ili ih vratite iz sigurnosne kopije. Spremljeni osobni ključevi su uključeni.',
     backupExport: 'Izvezi sigurnosnu kopiju', backupImport: 'Uvezi sigurnosnu kopiju',
     backupConfirm: 'Vratiti ovu sigurnosnu kopiju? Zamijenit će se spremljena povijest, jezik i tema.',
+    backupConfirmFailed: 'Potvrda se nije mogla prikazati. Ništa nije promijenjeno.',
     backupInvalid: 'Neispravna JSON sigurnosna kopija. Provjerite aplikaciju, verziju formata kopije i spremljene podatke. Ništa nije promijenjeno.',
     backupCancelled: 'Vraćanje je otkazano. Ništa nije promijenjeno.',
     backupRestored: 'Sigurnosna kopija je vraćena.', backupExported: 'Preuzimanje sigurnosne kopije je pokrenuto.',
@@ -132,6 +134,7 @@ const BACKUP_T = {
     backupDescription: 'Exportiere deinen gespeicherten Verlauf, die Sprache und das Design als JSON oder stelle sie aus einer Sicherung wieder her. Gespeicherte persönliche Schlüssel sind enthalten.',
     backupExport: 'Sicherung exportieren', backupImport: 'Sicherung importieren',
     backupConfirm: 'Diese Sicherung wiederherstellen? Dein gespeicherter Verlauf, die Sprache und das Design werden ersetzt.',
+    backupConfirmFailed: 'Die Bestätigung konnte nicht angezeigt werden. Es wurde nichts geändert.',
     backupInvalid: 'Ungültige JSON-Sicherung. Prüfe die App, die Version des Sicherungsformats und die gespeicherten Daten. Es wurde nichts geändert.',
     backupCancelled: 'Wiederherstellung abgebrochen. Es wurde nichts geändert.',
     backupRestored: 'Sicherung wiederhergestellt.', backupExported: 'Download der Sicherung gestartet.',
@@ -145,6 +148,7 @@ const BACKUP_T = {
     backupDescription: 'Esporta cronologia salvata, lingua e tema in JSON o ripristinali da un backup. Le chiavi personali salvate sono incluse.',
     backupExport: 'Esporta backup', backupImport: 'Importa backup',
     backupConfirm: 'Ripristinare questo backup? La cronologia salvata, la lingua e il tema verranno sostituiti.',
+    backupConfirmFailed: 'Impossibile mostrare la conferma. Nessuna modifica effettuata.',
     backupInvalid: 'Backup JSON non valido. Controlla applicazione, versione del formato del backup e dati salvati. Nessuna modifica effettuata.',
     backupCancelled: 'Ripristino annullato. Nessuna modifica effettuata.',
     backupRestored: 'Backup ripristinato.', backupExported: 'Download del backup avviato.',
@@ -158,6 +162,7 @@ const BACKUP_T = {
     backupDescription: 'Exporta el historial guardado, el idioma y el tema a JSON o restáuralos desde una copia de seguridad. Se incluyen las claves personales guardadas.',
     backupExport: 'Exportar copia de seguridad', backupImport: 'Importar copia de seguridad',
     backupConfirm: '¿Restaurar esta copia de seguridad? Se sustituirán el historial guardado, el idioma y el tema.',
+    backupConfirmFailed: 'No se pudo mostrar la confirmación. No se cambió nada.',
     backupInvalid: 'Copia de seguridad JSON no válida. Comprueba la aplicación, la versión del formato y los datos guardados. No se ha cambiado nada.',
     backupCancelled: 'Restauración cancelada. No se ha cambiado nada.',
     backupRestored: 'Copia de seguridad restaurada.', backupExported: 'Descarga de la copia de seguridad iniciada.',
@@ -174,6 +179,7 @@ export const RESET_T = {
     resetStoredData: 'Reset stored data',
     resetConfirm: 'Delete all stored data for Date Lotto Generator?\n\nThis deletes:\n• Saved combinations / History\n• Language preference\n• Theme preference\n\nThis cannot be undone unless you already have a backup. Your current generator input and unsaved combination will stay unchanged.',
     resetSucceeded: 'Stored data deleted. History is empty, language is English and theme is System.',
+    resetConfirmFailed: 'Could not display the confirmation. Stored data was not deleted.',
     resetFailed: 'Could not delete stored data. Previous data was preserved.',
     resetRollbackFailed: 'Reset failed and previous data could not be fully restored. Some stored data may be missing. Restore a backup if available.'
   },
@@ -181,6 +187,7 @@ export const RESET_T = {
     resetStoredData: 'Obriši spremljene podatke',
     resetConfirm: 'Obrisati sve spremljene podatke aplikacije Date Lotto Generator?\n\nBrišu se:\n• Spremljene kombinacije / Povijest\n• Postavka jezika\n• Postavka teme\n\nRadnja se ne može poništiti osim ako već imate sigurnosnu kopiju. Trenutni unos u generatoru i nespremljena kombinacija ostaju nepromijenjeni.',
     resetSucceeded: 'Spremljeni podaci su obrisani. Povijest je prazna, jezik je engleski, a tema prati sustav.',
+    resetConfirmFailed: 'Potvrda se nije mogla prikazati. Spremljeni podaci nisu obrisani.',
     resetFailed: 'Brisanje spremljenih podataka nije uspjelo. Prethodni podaci su sačuvani.',
     resetRollbackFailed: 'Brisanje nije uspjelo, a prethodni podaci nisu u potpunosti vraćeni. Neki spremljeni podaci možda nedostaju. Vratite sigurnosnu kopiju ako je imate.'
   },
@@ -188,6 +195,7 @@ export const RESET_T = {
     resetStoredData: 'Gespeicherte Daten löschen',
     resetConfirm: 'Alle gespeicherten Daten von Date Lotto Generator löschen?\n\nGelöscht werden:\n• Gespeicherte Kombinationen / Verlauf\n• Spracheinstellung\n• Designeinstellung\n\nDies kann nur rückgängig gemacht werden, wenn du bereits eine Sicherung hast. Deine aktuelle Generatoreingabe und ungespeicherte Kombination bleiben unverändert.',
     resetSucceeded: 'Gespeicherte Daten gelöscht. Der Verlauf ist leer, die Sprache ist Englisch und das Design folgt dem System.',
+    resetConfirmFailed: 'Die Bestätigung konnte nicht angezeigt werden. Gespeicherte Daten wurden nicht gelöscht.',
     resetFailed: 'Gespeicherte Daten konnten nicht gelöscht werden. Die bisherigen Daten wurden beibehalten.',
     resetRollbackFailed: 'Das Löschen ist fehlgeschlagen und die bisherigen Daten konnten nicht vollständig wiederhergestellt werden. Einige gespeicherte Daten fehlen möglicherweise. Stelle eine Sicherung wieder her, falls vorhanden.'
   },
@@ -195,6 +203,7 @@ export const RESET_T = {
     resetStoredData: 'Elimina i dati salvati',
     resetConfirm: 'Eliminare tutti i dati salvati di Date Lotto Generator?\n\nVerranno eliminati:\n• Combinazioni salvate / Cronologia\n• Preferenza della lingua\n• Preferenza del tema\n\nQuesta operazione non può essere annullata senza un backup già disponibile. I dati attualmente inseriti nel generatore e la combinazione non salvata rimarranno invariati.',
     resetSucceeded: 'Dati salvati eliminati. La cronologia è vuota, la lingua è inglese e il tema segue il sistema.',
+    resetConfirmFailed: 'Impossibile mostrare la conferma. I dati salvati non sono stati eliminati.',
     resetFailed: 'Impossibile eliminare i dati salvati. I dati precedenti sono stati conservati.',
     resetRollbackFailed: 'Eliminazione non riuscita e impossibile ripristinare completamente i dati precedenti. Alcuni dati salvati potrebbero mancare. Ripristina un backup, se disponibile.'
   },
@@ -202,6 +211,7 @@ export const RESET_T = {
     resetStoredData: 'Eliminar datos guardados',
     resetConfirm: '¿Eliminar todos los datos guardados de Date Lotto Generator?\n\nSe eliminarán:\n• Combinaciones guardadas / Historial\n• Preferencia de idioma\n• Preferencia de tema\n\nEsta acción no se puede deshacer a menos que ya tengas una copia de seguridad. Los datos actuales del generador y la combinación sin guardar permanecerán sin cambios.',
     resetSucceeded: 'Datos guardados eliminados. El historial está vacío, el idioma es inglés y el tema sigue al sistema.',
+    resetConfirmFailed: 'No se pudo mostrar la confirmación. No se eliminaron los datos guardados.',
     resetFailed: 'No se pudieron eliminar los datos guardados. Se conservaron los datos anteriores.',
     resetRollbackFailed: 'La eliminación falló y no se pudieron recuperar todos los datos anteriores. Es posible que falten algunos datos guardados. Restaura una copia de seguridad si dispones de ella.'
   }
