@@ -256,6 +256,49 @@ test('language change updates all five toolbar names and titles without announci
   assert.equal(clears, 5);
 });
 
+
+test('enhanced language button and listbox update accessible labels in all five languages', () => {
+  const source = read('src/js/ag-language-menu.js');
+  const extracted = source.match(/  function updateDisplay\(\) \{[\s\S]*?\n  \}/);
+  assert.ok(extracted, 'updateDisplay implementation must exist');
+  const names = [
+    { value: 'en', name: 'English' }, { value: 'hr', name: 'Hrvatski' },
+    { value: 'de', name: 'Deutsch' }, { value: 'it', name: 'Italiano' },
+    { value: 'es', name: 'Español' }
+  ];
+  const select = { value: 'en', label: 'Language',
+    getAttribute(name) { return name === 'aria-label' ? this.label : null; } };
+  const button = { attributes: {}, innerHTML: '',
+    setAttribute(name, value) { this.attributes[name] = value; } };
+  const options = { attributes: {},
+    setAttribute(name, value) { this.attributes[name] = value; } };
+  const entries = names.map(item => ({
+    dataset: { language: item.value }, attributes: {}, selected: false,
+    classList: { toggle(name, selected) { assert.equal(name, 'selected'); this.owner.selected = selected; } },
+    setAttribute(name, value) { this.attributes[name] = value; }
+  }));
+  for (const entry of entries) entry.classList.owner = entry;
+  const context = vm.createContext({ select, button, options, languages: names,
+    markup: item => item.name, items: () => entries });
+  vm.runInContext(extracted[0], context);
+  for (const lang of ['en', 'hr', 'de', 'it', 'es']) {
+    select.value = lang;
+    select.label = T[lang].languageLabel;
+    vm.runInContext('updateDisplay()', context);
+    assert.equal(button.attributes['aria-label'], select.label, lang);
+    assert.equal(options.attributes['aria-label'], select.label, lang);
+    assert.equal(entries.filter(entry => entry.selected).length, 1, lang);
+    assert.equal(entries.find(entry => entry.selected).dataset.language, lang);
+    assert.ok(button.innerHTML.includes(names.find(item => item.value === lang).name));
+  }
+  select.label = '';
+  vm.runInContext('updateDisplay()', context);
+  assert.equal(button.attributes['aria-label'], 'Language');
+  assert.equal(options.attributes['aria-label'], 'Language');
+  assert.match(source, /select\.addEventListener\('change', updateDisplay\)/);
+  assert.match(source, /mutation\.attributeName === 'lang'/);
+});
+
 test('generation announces the actual result, including repeated draws, but rejects invalid input', () => {
   const elements = Object.fromEntries(Object.entries({ dateInput: '17/09/2026', mainCount: '6', mainMax: '49', extraCount: '0', extraMax: '12', salt: '' }).map(([id, value]) => [id, { value }]));
   const messages = [];
