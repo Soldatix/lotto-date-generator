@@ -1,6 +1,6 @@
 {
   "name": "lotto-date-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Standalone browser application for generating deterministic lottery combinations from a selected date.",
   "scripts": {
     "dev": "vite",
