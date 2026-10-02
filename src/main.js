@@ -9,6 +9,7 @@ import { getHistory, addHistory, deleteHistory, getLanguage, setLanguage } from 
 import { createLiveStatus } from './js/accessibility.js';
 import { createClipboardHandlers } from './js/clipboard.js';
 import { createInfoModalHandlers } from './js/info-modal.js';
+import { initializeExternalLinks } from './js/external-links.js';
 import { createSettingsModalHandlers } from './js/settings-modal.js';
 import { applyTheme, selectTheme } from './js/theme.js';
 import { createBackupHandlers, createResetHandler } from './js/backup.js';
@@ -24,6 +25,12 @@ $('infoVersion').textContent=version;
 const announce=createLiveStatus({ $ });
 const { infoTr, applyInfoLanguage, openInfo, closeInfo, handleInfoOverlayClick, handleInfoKeydown }=createInfoModalHandlers({ $ });
 const { applySettingsLanguage, openSettings, closeSettings, handleSettingsOverlayClick, handleSettingsKeydown }=createSettingsModalHandlers({ $ });
+initializeExternalLinks({
+  container: $('infoOverlay'),
+  isNative: () => window.location?.hostname === 'tauri.localhost' ||
+    typeof window.__TAURI_INTERNALS__ !== 'undefined',
+  onError: () => alert(infoTr('linkFailed'))
+});
 const { copyResult, copyHistory, copyWallet }=createClipboardHandlers({ $, getLastResult:()=>lastResult, resultString, tr, infoTr, announce });
 const { exportBackup, importBackup }=createBackupHandlers({ $, tr: infoTr, onRestore(data){$('language').value=data.language;applyTheme();applyLanguage(false)} });
 $('exportBackup').onclick=exportBackup;
