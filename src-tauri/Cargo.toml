@@ -1,6 +1,6 @@
 [package]
 name = "date-lotto-generator"
-version = "1.0.1"
+version = "1.0.2"
 description = "Date Lotto Generator Windows desktop application"
 authors = ["Apps & Games"]
 edition = "2021"
