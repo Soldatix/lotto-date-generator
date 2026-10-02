@@ -15,7 +15,7 @@ export function createSettingsModalHandlers({ $ }) {
       el.textContent = settingsTr(el.dataset.settingsI18n);
     });
     const status = $('backupStatus');
-    if (status.dataset.infoI18n) status.textContent = settingsTr(status.dataset.infoI18n) + (status.dataset.backupPath ? ' ' + status.dataset.backupPath : '');
+    if (status.dataset.infoI18n) status.textContent = settingsTr(status.dataset.infoI18n) + (status.dataset.infoI18n === 'backupSaved' && status.dataset.backupPath ? ' ' + status.dataset.backupPath : '');
   }
   function openSettings() {
     const overlay = $('settingsOverlay');

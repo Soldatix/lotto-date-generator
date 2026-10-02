@@ -17,6 +17,7 @@ export function createResetHandler({
       let approved;
       try { approved = await confirmReset(tr('resetConfirm')); }
       catch {
+        delete $('backupStatus').dataset.backupPath;
         $('backupStatus').dataset.infoI18n = 'resetConfirmFailed';
         announce(tr('resetConfirmFailed'), 'backupStatus');
         return;
@@ -24,6 +25,7 @@ export function createResetHandler({
       if (approved !== true) return;
       const result = resetStoredData();
       if (result === 'resetSucceeded') onReset();
+      delete $('backupStatus').dataset.backupPath;
       $('backupStatus').dataset.infoI18n = result;
       announce(tr(result), 'backupStatus');
     } finally {

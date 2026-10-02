@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { storeEditionHtmlPlugin } from './build/store-edition.mjs';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: './',
-  plugins: [VitePWA({
+  plugins: [storeEditionHtmlPlugin(mode === 'store'), VitePWA({
     strategies: 'generateSW',
     // Keep the existing manifest and explicitly guard registration in the app.
     manifest: false,
@@ -17,4 +18,4 @@ export default defineConfig({
       clientsClaim: false,
     },
   })],
-});
+}));
