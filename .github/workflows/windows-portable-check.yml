@@ -1,0 +1,39 @@
+name: Date Lotto Windows Portable packaging checks
+
+on:
+  push:
+    branches:
+      - factory/date-lotto-windows-portable-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  portable-quality-gate:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked frontend dependencies
+        run: npm ci
+      - name: Build the ordinary Web/PWA edition
+        run: npm run build
+      - name: Run the complete existing Node test suite
+        run: npm test
+      - name: Ensure Store frontend still builds separately
+        run: npm run build:store
+      - name: Check the Windows Store HTML excludes crypto markup
+        shell: pwsh
+        run: |
+          $html = Get-Content "dist/index.html" -Raw
+          if ($html.Contains("STORE_CRYPTO_BEGIN") -or $html.Contains("STORE_CRYPTO_END")) {
+            throw "STORE-ONLY CRYPTO FILTER BROKEN"
+          }
+      - name: Validate Portable packaging and failure safeguards
+        shell: pwsh
+        run: ./tests/portable-package.test.ps1
