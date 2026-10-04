@@ -28,7 +28,7 @@ function fixture(initial = [['lottoHistory', '[]'], ['lottoLang', 'en'], ['lotto
     matchMedia: () => ({ matches: true, addEventListener() {} }) },
     localStorage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) },
     confirmed: true, announce: { clear() {} }, lastResult: null,
-    renderPresets() {}, applyInfoLanguage() {}, webInstall: { applyLanguage() {} } });
+    renderPresets() {}, applyInfoLanguage() {}, applySettingsLanguage() {}, webInstall: { applyLanguage() {} } });
   for (const path of ['src/js/generator.js', 'src/js/storage.js', 'src/js/theme.js', 'src/data/translations.js', 'src/js/backup.js']) {
     vm.runInContext(read(path).replace(/^import .*\r?\n/gm, '').replaceAll('export ', ''), context);
   }
@@ -211,7 +211,7 @@ test('native keyboard controls keep visible names and activate named hidden JSON
   for (const id of ['exportBackup', 'importBackup']) {
     const button = html.match(new RegExp(`<button[^>]*id="${id}"[^>]*>[^<]+<\\/button>`))[0];
     assert.match(button, /type="button"/);
-    assert.match(button, /data-info-i18n=/);
+    assert.match(button, /data-settings-i18n=/);
     assert.doesNotMatch(button, /tabindex="-1"|disabled|hidden/);
   }
   assert.match(html, /<input type="file" id="backupFile" accept="\.json,application\/json" hidden aria-labelledby="importBackup">/);
