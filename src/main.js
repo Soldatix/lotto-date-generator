@@ -9,6 +9,7 @@ import { getHistory, addHistory, deleteHistory, getLanguage, setLanguage } from 
 import { createLiveStatus } from './js/accessibility.js';
 import { createClipboardHandlers } from './js/clipboard.js';
 import { createInfoModalHandlers } from './js/info-modal.js';
+import { createSettingsModalHandlers } from './js/settings-modal.js';
 import { applyTheme, selectTheme } from './js/theme.js';
 import { createBackupHandlers, createResetHandler } from './js/backup.js';
 import { toggleFullscreen } from './js/fullscreen.js';
@@ -22,6 +23,7 @@ const webInstall = initializeWebInstall({ $, getText: () => WEB_INSTALL_T[$('lan
 $('infoVersion').textContent=version;
 const announce=createLiveStatus({ $ });
 const { infoTr, applyInfoLanguage, openInfo, closeInfo, handleInfoOverlayClick, handleInfoKeydown }=createInfoModalHandlers({ $ });
+const { applySettingsLanguage, openSettings, closeSettings, handleSettingsOverlayClick, handleSettingsKeydown }=createSettingsModalHandlers({ $ });
 const { copyResult, copyHistory, copyWallet }=createClipboardHandlers({ $, getLastResult:()=>lastResult, resultString, tr, infoTr, announce });
 const { exportBackup, importBackup }=createBackupHandlers({ $, tr: infoTr, onRestore(data){$('language').value=data.language;applyTheme();applyLanguage(false)} });
 $('exportBackup').onclick=exportBackup;
@@ -38,10 +40,11 @@ function renderResult(){const r=lastResult;if(!r)return;const balls=r.main.map(n
 function saveResult(){if(!lastResult)return;const saved=addHistory(lastResult);$('saveBtn').textContent=tr(saved?'saved':'save');announce(tr(saved?'saved':'saveFailed'));renderHistory()}
 function deleteHistoryEntry(history,index){if(!deleteHistory(history,index))announce(tr('deleteFailed'));renderHistory()}
 function renderHistory(){const h=getHistory();$('historyWrap').hidden=!h.length;const w=$('historyList');w.innerHTML='';h.forEach((r,i)=>{const row=document.createElement('div');row.className='histItem';row.innerHTML=`<div class="histText" title="${resultString(r)}">${resultString(r)}</div><div><button class="btn mini" data-copy="${i}">${tr('copy')}</button> <button class="btn mini" data-del="${i}">${tr('delete')}</button></div>`;w.appendChild(row)});w.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyHistory(h[+b.dataset.copy],b));w.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteHistoryEntry(h,+b.dataset.del))}
-function applyLanguage(persist=true){announce.clear();document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));document.querySelectorAll('[data-i18n-name]').forEach(el=>{const name=tr(el.dataset.i18nName);el.setAttribute('aria-label',name);el.title=name});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));renderPresets();if(lastResult)renderResult();renderHistory();applyInfoLanguage();webInstall.applyLanguage();if(persist)setLanguage($('language').value)}
+function applyLanguage(persist=true){announce.clear();document.documentElement.lang=$('language').value;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));document.querySelectorAll('[data-i18n-name]').forEach(el=>{const name=tr(el.dataset.i18nName);el.setAttribute('aria-label',name);el.title=name});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));renderPresets();if(lastResult)renderResult();renderHistory();applyInfoLanguage();applySettingsLanguage();webInstall.applyLanguage();if(persist)setLanguage($('language').value)}
 function reset(){announce.clear();selectPreset('6');$('salt').value='';$('dateInput').value='';lastResult=null;$('resultArea').className='empty';$('resultArea').innerHTML=`<div class="big">🎱</div><p data-i18n="empty">${tr('empty')}</p>`}
 
-$('infoBtn').onclick=openInfo;$('infoX').onclick=closeInfo;$('infoClose').onclick=closeInfo;$('infoOverlay').addEventListener('click',handleInfoOverlayClick);document.addEventListener('keydown',handleInfoKeydown);document.querySelectorAll('.copy-wallet').forEach(b=>b.onclick=()=>copyWallet(b));
+$('settingsBtn').onclick=()=>{closeInfo();openSettings()};$('settingsX').onclick=closeSettings;$('settingsClose').onclick=closeSettings;$('settingsOverlay').addEventListener('click',handleSettingsOverlayClick);document.addEventListener('keydown',handleSettingsKeydown);
+$('infoBtn').onclick=()=>{closeSettings();openInfo()};$('infoX').onclick=closeInfo;$('infoClose').onclick=closeInfo;$('infoOverlay').addEventListener('click',handleInfoOverlayClick);document.addEventListener('keydown',handleInfoKeydown);document.querySelectorAll('.copy-wallet').forEach(b=>b.onclick=()=>copyWallet(b));
 $('generateBtn').onclick=generate;$('resetBtn').onclick=reset;$('language').onchange=applyLanguage;$('themeSelect').onchange=e=>selectTheme(e.target.value);$('fullscreenBtn').onclick=toggleFullscreen;
 ['mainCount','mainMax','extraCount','extraMax'].forEach(id=>$(id).addEventListener('input',()=>{currentPreset='custom';renderPresets()}));
 $('dateInput').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);e.target.value=v});
