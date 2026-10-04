@@ -75,6 +75,7 @@
     <div class="brand"><div class="logo">L</div><div><h1 data-i18n="title">Date Lotto Generator</h1><div class="subtitle" data-i18n="subtitle">Generate repeatable lotto combinations from any date.</div></div></div>
     <div class="toolbar">
       <select id="language" data-ag-language-menu data-i18n-name="languageLabel" title="Language" aria-label="Language"><option value="en">English</option><option value="hr">Hrvatski</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="es">Español</option></select>
+      <button class="iconbtn" id="settingsBtn" type="button" data-i18n-name="settingsLabel" title="Settings" aria-label="Settings">⚙</button>
       <button class="iconbtn" id="infoBtn" data-i18n-name="infoLabel" title="Information / Donations" aria-label="Information / Donations">ⓘ</button>
       <select id="themeSelect" style="width:auto" data-i18n-name="themeLabel" title="Theme" aria-label="Theme"><option value="light" data-i18n="themeLight">Light</option><option value="dark" data-i18n="themeDark">Dark</option><option value="system" data-i18n="themeSystem" selected>System</option></select>
       <button class="iconbtn" id="fullscreenBtn" data-i18n-name="fullscreenLabel" title="Toggle fullscreen" aria-label="Toggle fullscreen">⛶</button>
@@ -110,6 +111,39 @@
 </div>
 
 
+<div class="info-overlay settings-overlay" id="settingsOverlay" aria-hidden="true">
+  <section class="info-modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <header class="info-head settings-head">
+      <div class="settings-heading">
+        <div class="settings-brand">APPS &amp; GAMES</div>
+        <h2 id="settingsTitle" class="info-title"><span aria-hidden="true">⚙</span> <span data-settings-i18n="title">Settings</span></h2>
+      </div>
+      <button type="button" class="settings-x" id="settingsX" aria-label="Close" title="Close">×</button>
+    </header>
+    <div class="info-body settings-body">
+      <section class="settings-box" aria-labelledby="settingsDataTitle">
+        <h3 id="settingsDataTitle" data-settings-i18n="backupTitle">Data &amp; backup</h3>
+        <p data-settings-i18n="backupDescription">Export your saved lotto combinations, language and theme to a JSON backup, or import a previous backup. Saved Personal Keys are included.</p>
+        <div class="settings-actions">
+          <button type="button" class="btn secondary" id="exportBackup" data-settings-i18n="backupExport">↓ Export backup</button>
+          <button type="button" class="btn secondary" id="importBackup" aria-controls="backupFile" data-settings-i18n="backupImport">↑ Import backup</button>
+        </div>
+        <input type="file" id="backupFile" accept=".json,application/json" hidden aria-labelledby="importBackup">
+        <p id="backupStatus" class="hint" role="status" aria-live="polite" aria-atomic="true"></p>
+      </section>
+      <section class="settings-box settings-danger" aria-labelledby="settingsDangerTitle">
+        <h3 id="settingsDangerTitle" data-settings-i18n="dangerTitle">Danger zone</h3>
+        <p data-settings-i18n="dangerDescription">Deleting removes saved lotto combinations, language and theme from this app. The action cannot be undone without a previous backup.</p>
+        <button type="button" class="btn secondary settings-delete" id="resetStoredData" data-settings-i18n="resetStoredData">Delete all stored data</button>
+      </section>
+    </div>
+    <footer class="info-foot settings-foot">
+      <div class="settings-local"><span aria-hidden="true">🔒</span> <span data-settings-i18n="localStorage">Local storage</span></div>
+      <button type="button" class="btn primary settings-close" id="settingsClose" data-settings-i18n="close">Close</button>
+    </footer>
+  </section>
+</div>
+
 <div class="info-overlay" id="infoOverlay" aria-hidden="true">
   <section class="info-modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
     <header class="info-head">
@@ -142,17 +176,6 @@
         </ul>
         <p data-info-i18n="personalKey">When you click Save, the Personal Key used to generate that combination is saved with it in localStorage. The Personal Key is not a password or a security secret.</p>
       </div>
-      <section class="info-box" aria-labelledby="backupTitle">
-        <h3 id="backupTitle" class="info-kicker" data-info-i18n="backupTitle">Data / Backup</h3>
-        <p data-info-i18n="backupDescription">Export your saved history, language and theme to JSON, or restore them from a backup. Saved Personal Keys are included.</p>
-        <div class="actions">
-          <button type="button" class="btn secondary" id="exportBackup" data-info-i18n="backupExport">Export backup</button>
-          <button type="button" class="btn secondary" id="importBackup" aria-controls="backupFile" data-info-i18n="backupImport">Import backup</button>
-          <button type="button" class="btn secondary" id="resetStoredData" data-info-i18n="resetStoredData">Reset stored data</button>
-        </div>
-        <input type="file" id="backupFile" accept=".json,application/json" hidden aria-labelledby="importBackup">
-        <p id="backupStatus" class="hint" role="status" aria-live="polite" aria-atomic="true"></p>
-      </section>
       <h3 class="info-section-title" data-info-i18n="support">Support / Donations</h3>
       <div class="info-box">
         <div class="info-kicker" data-info-i18n="charity">Charity purpose</div>
