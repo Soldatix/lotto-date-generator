@@ -48,7 +48,7 @@ try {
     page.waitForEvent('download'),
     page.locator('#exportBackup').click()
   ]);
-  assert.match(download.suggestedFilename(), /^date-lotto-generator-backup-\\d{4}-\\d{2}-\\d{2}\\.json$/);
+  assert.match(download.suggestedFilename(), /^date-lotto-generator-backup-\d{4}-\d{2}-\d{2}\.json$/);
   const backup = JSON.parse(await readFile(await download.path(), 'utf8'));
   assert.equal(backup.app, 'date-lotto-generator');
   assert.equal(backup.data.history.length, 1);
