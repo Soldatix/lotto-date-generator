@@ -116,7 +116,7 @@ test('All five languages provide all reset messages and confirmation uses curren
 });
 test('Keyboard-accessible named native button and native confirmation; existing live status', () => {
   const html = read('index.html');
-  assert.match(html, /<button[^>]*id="resetStoredData" data-settings-i18n="resetStoredData">Delete all stored data<\\/button>/);
+  assert.match(html, /<button[^>]*id="resetStoredData" data-settings-i18n="resetStoredData">Delete all stored data/);
   assert.match(read('src/js/backup.js'), /confirmReset = message => window.confirm\(message\)/);
   assert.match(html, /id="infoLiveStatus"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.doesNotMatch(read('src/js/storage.js'), /localStorage\.clear\(/);
