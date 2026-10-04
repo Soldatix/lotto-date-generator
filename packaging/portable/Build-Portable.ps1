@@ -86,7 +86,7 @@ try {
     $created = $true
     Expand-Archive -LiteralPath $zip -DestinationPath $verify -ErrorAction Stop
     $names = @(Get-ChildItem -LiteralPath $verify -File | Select-Object -ExpandProperty Name | Sort-Object)
-    $expected = @("date-lotto-generator.exe", "README-PORTABLE.txt", "SHA256SUMS.txt" | Sort-Object)
+    $expected = @(@("date-lotto-generator.exe", "README-PORTABLE.txt", "SHA256SUMS.txt") | Sort-Object)
     if (($names -join "|") -ne ($expected -join "|")) {
         throw "UNEXPECTED ZIP CONTENTS - STOP"
     }
