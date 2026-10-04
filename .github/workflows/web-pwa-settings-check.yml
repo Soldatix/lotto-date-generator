@@ -1,0 +1,51 @@
+name: Date Lotto Web/PWA checks
+
+on:
+  push:
+    branches:
+      - factory/date-lotto-web-pwa-settings
+  pull_request:
+    branches:
+      - main
+    paths:
+      - index.html
+      - src/**
+      - tests/**
+      - ci/**
+      - package*.json
+      - vite.config.mjs
+      - .github/workflows/web-pwa-settings-check.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests-build-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Production build (also creates PWA service worker)
+        run: npm run build
+      - name: Full Node test suite
+        run: npm test
+      - name: Install isolated Chromium test dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Browser and offline PWA smoke tests
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 --strictPort > /tmp/lotto-preview.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail http://127.0.0.1:4173/ > /dev/null
+          node ci/web-pwa-settings-smoke.mjs
