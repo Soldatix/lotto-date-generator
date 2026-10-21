@@ -74,3 +74,9 @@ regression at 320, 360, 390, 768 and 1280 px in all five languages, using one an
 multiple saved entries, long personal keys and maximum-length 20+10 results.
 It verifies document/card/content widths, readable untruncated text, mobile touch
 targets and working History Copy/Delete controls.
+
+## Credits / Attribution
+
+If you use our source code to create your own version, we'd appreciate a mention in its About / Info section:
+
+**Based on Date Lotto Generator by Apps & Games — [appsandgames.org](https://appsandgames.org/)**
