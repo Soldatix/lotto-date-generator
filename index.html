@@ -56,6 +56,8 @@
 }
 </script>
 <link rel="stylesheet" href="./src/styles/main.css" />
+<link rel="stylesheet" href="https://appsandgames.org/privacy-choice.css" />
+<script defer src="https://appsandgames.org/privacy-choice.js"></script>
 </head>
 <body>
 <section id="webInstallBanner" class="web-install-banner" hidden aria-labelledby="webInstallTitle">
@@ -107,7 +109,18 @@
       <div class="history" id="historyWrap" hidden><h2 data-i18n="history">Saved combinations</h2><div class="historyList" id="historyList"></div></div>
     </section>
   </div>
+  <!-- Consent-gated, one responsive original Adsterra banner.
+       Outside generator form, results and history. -->
+  <section id="lotto-ad-area" aria-label="Advertisement" hidden>
+    <div class="lotto-ad-unit" data-size="728x90" hidden>
+      <script src="./lotto-adsterra-loader.js" data-unit="desktop"></script>
+    </div>
+    <div class="lotto-ad-unit" data-size="320x50" hidden>
+      <script src="./lotto-adsterra-loader.js" data-unit="mobile"></script>
+    </div>
+  </section>
   <div class="footer" data-i18n="footer">Apps &amp; Games • Local data • Free to use</div>
+  <footer class="footer-links lotto-privacy-footer" aria-label="Privacy choices"></footer>
 </div>
 
 
