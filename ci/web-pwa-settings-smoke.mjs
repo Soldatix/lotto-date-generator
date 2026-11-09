@@ -7,6 +7,17 @@ const browser = await chromium.launch({ headless: true });
 
 async function ready(page) {
   await page.waitForFunction(() => typeof document.getElementById('settingsBtn')?.onclick === 'function');
+  // The shared privacy banner is intentionally shown to a new visitor.
+  // Reject optional purposes through the real UI before testing Settings:
+  // otherwise the banner correctly intercepts clicks on the modal.
+  const banner = page.locator('#ag-privacy-banner');
+  if (await banner.isVisible()) {
+    await banner.locator('button.ag-privacy-secondary').click();
+    await page.waitForFunction(() =>
+      !document.getElementById('ag-privacy-banner') &&
+      typeof document.getElementById('settingsBtn')?.onclick === 'function'
+    );
+  }
 }
 
 try {
